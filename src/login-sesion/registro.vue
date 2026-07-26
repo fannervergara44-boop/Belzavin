@@ -8,15 +8,19 @@
     </div>
 
     <div class="registro">
-      <input type="text" v-model="user" placeholder="Usuario" />
+      <input type="text" v-model="user" placeholder="Usuario" :disabled="cargando" />
 
-      <input type="email" v-model="correo" placeholder="Correo electrónico" />
+      <input type="email" v-model="correo" placeholder="Correo electrónico" :disabled="cargando" />
 
-      <input type="password" v-model="clave" placeholder="Contraseña" />
+      <input type="password" v-model="clave" placeholder="Contraseña" :disabled="cargando" />
 
-      <button @click="registrar">Registrarse</button>
+      <button @click="registrar" :disabled="cargando">
+        {{ cargando ? "Registrando..." : "Registrarse" }}
+      </button>
 
-      <button class="google-btn" @click="registrarGoogle">Registrarse con Google</button>
+      <button class="google-btn" @click="registrarGoogle" :disabled="cargando">
+        Registrarse con Google
+      </button>
 
       <RouterLink to="/inicio_sesion" class="link"> ¿Ya tienes cuenta? Inicia sesión </RouterLink>
     </div>
@@ -31,6 +35,7 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { auth } from "../service/firebase";
 import { useAuthStore } from "../stores/auth";
@@ -42,6 +47,7 @@ const authStore = useAuthStore();
 const user = ref("");
 const correo = ref("");
 const clave = ref("");
+const cargando = ref(false);
 
 // Genera una URL de avatar con las iniciales del nombre
 function generarAvatar(nombre) {
@@ -86,6 +92,8 @@ const registrar = async () => {
     return;
   }
 
+  cargando.value = true;
+
   try {
     const cred = await createUserWithEmailAndPassword(auth, correo.value, clave.value);
 
@@ -113,7 +121,7 @@ const registrar = async () => {
     switch (error.code) {
       case "auth/email-already-in-use":
         Swal.fire({
-          icon: "Error",
+          icon: "error",
           title: "Correo ya existente",
           text: "Este correo ya está registrado.",
           confirmButtonText: "aceptar",
@@ -122,7 +130,7 @@ const registrar = async () => {
         break;
       case "auth/invalid-email":
         Swal.fire({
-          icon: "Error",
+          icon: "error",
           title: "Correo inválido",
           text: "El correo ingresado no es válido.",
           confirmButtonText: "aceptar",
@@ -131,7 +139,7 @@ const registrar = async () => {
         break;
       case "auth/weak-password":
         Swal.fire({
-          icon: "Error",
+          icon: "error",
           title: "Contraseña débil",
           text: "La contraseña es demasiado débil.",
           confirmButtonText: "aceptar",
@@ -147,6 +155,8 @@ const registrar = async () => {
           showCloseButton: true,
         });
     }
+  } finally {
+    cargando.value = false;
   }
 };
 
@@ -162,27 +172,49 @@ const registrarGoogle = async () => {
     return;
   }
 
+  cargando.value = true;
+
   try {
     const provider = new GoogleAuthProvider();
     const resultado = await signInWithPopup(auth, provider);
 
-    await updateProfile(resultado.user, {
-      displayName: user.value,
-    });
+    // Solo sobrescribimos el nombre si es un usuario NUEVO.
+    // Si ya existía una cuenta con este Google, no le pisamos el displayName.
+    const infoAdicional = getAdditionalUserInfo(resultado);
+    const esNuevo = infoAdicional?.isNewUser;
 
-    await resultado.user.reload();
+    if (esNuevo) {
+      await updateProfile(resultado.user, {
+        displayName: user.value,
+      });
+      await resultado.user.reload();
+    }
+
     authStore.usuario = auth.currentUser;
 
     console.log("Usuario Google:", auth.currentUser);
     await Swal.fire({
       icon: "success",
-      title: "Bienvenido",
+      title: esNuevo ? "Bienvenido" : "Bienvenido de nuevo",
       text: `Bienvenido ${auth.currentUser.displayName}`,
       confirmButtonText: "aceptar",
       showConfirmButton: true,
     });
+
+    user.value = "";
+    correo.value = "";
+    clave.value = "";
   } catch (error) {
     console.error(error);
+
+    // El usuario cerró el popup o canceló: no es un error real, no molestamos con una alerta.
+    if (
+      error.code === "auth/popup-closed-by-user" ||
+      error.code === "auth/cancelled-popup-request"
+    ) {
+      return;
+    }
+
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -190,6 +222,8 @@ const registrarGoogle = async () => {
       confirmButtonText: "aceptar",
       showCloseButton: true,
     });
+  } finally {
+    cargando.value = false;
   }
 };
 </script>
@@ -290,19 +324,6 @@ const registrarGoogle = async () => {
   animation: fadeInDown 0.7s ease;
 }
 
-.titulo h1 {
-  margin: 0;
-
-  color: #d7f5e6;
-
-  text-align: center;
-
-  font-size: 2rem;
-  font-weight: 700;
-
-  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
-}
-
 /* Formulario */
 
 .registro {
@@ -367,6 +388,11 @@ const registrarGoogle = async () => {
   box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.18);
 }
 
+.registro input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Botones */
 
 .registro button {
@@ -399,6 +425,13 @@ const registrarGoogle = async () => {
 
 .registro button:active {
   transform: scale(0.97);
+}
+
+.registro button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Botón Google */

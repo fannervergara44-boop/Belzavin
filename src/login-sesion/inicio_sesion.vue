@@ -9,13 +9,17 @@
     </div>
 
     <div class="inicio-sesion">
-      <input type="email" v-model="correo" placeholder="Correo electrónico" />
+      <input type="email" v-model="correo" placeholder="Correo electrónico" :disabled="cargando" />
 
-      <input type="password" v-model="clave" placeholder="Contraseña" />
+      <input type="password" v-model="clave" placeholder="Contraseña" :disabled="cargando" />
 
-      <button @click="iniciarSesion">Entrar</button>
+      <button @click="iniciarSesion" :disabled="cargando">
+        {{ cargando ? "Entrando..." : "Entrar" }}
+      </button>
 
-      <button class="google-btn" @click="iniciarGoogle">Iniciar con Google</button>
+      <button class="google-btn" @click="iniciarGoogle" :disabled="cargando">
+        Iniciar con Google
+      </button>
 
       <RouterLink to="/registro" class="link"> ¿No tienes cuenta? Regístrate </RouterLink>
     </div>
@@ -28,11 +32,11 @@ import { RouterLink, useRouter } from "vue-router";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../service/firebase";
 import Swal from "sweetalert2";
-import titulo from "@/components/titulo.vue";
 import Belzavin from "@/components/belzavin.vue";
 
 const correo = ref("");
 const clave = ref("");
+const cargando = ref(false);
 const router = useRouter();
 
 const iniciarSesion = async () => {
@@ -58,6 +62,8 @@ const iniciarSesion = async () => {
     });
     return;
   }
+
+  cargando.value = true;
 
   try {
     const credenciales = await signInWithEmailAndPassword(auth, correo.value, clave.value);
@@ -86,34 +92,38 @@ const iniciarSesion = async () => {
       case "auth/wrong-password":
         Swal.fire({
           icon: "error",
-          title: "contraseña erronea",
+          title: "Contraseña errónea",
           text: "La contraseña es incorrecta.",
-          confirmButtonText: "aceptar",
+          confirmButtonText: "Aceptar",
           showCloseButton: true,
         });
         break;
       case "auth/invalid-email":
         Swal.fire({
           icon: "error",
-          title: "correo invalido",
+          title: "Correo inválido",
           text: "El correo no es válido.",
-          confirmButtonText: "aceptar",
+          confirmButtonText: "Aceptar",
           showCloseButton: true,
         });
         break;
       default:
         Swal.fire({
           icon: "error",
-          title: "error",
+          title: "Error",
           text: "Ocurrió un error al iniciar sesión.",
           confirmButtonText: "Aceptar",
           showCloseButton: true,
         });
     }
+  } finally {
+    cargando.value = false;
   }
 };
 
 const iniciarGoogle = async () => {
+  cargando.value = true;
+
   try {
     const provider = new GoogleAuthProvider();
 
@@ -121,7 +131,7 @@ const iniciarGoogle = async () => {
 
     console.log("Usuario Google:", resultado.user);
 
-    Swal.fire({
+    await Swal.fire({
       icon: "success",
       title: "Bienvenido",
       text: `Bienvenido ${resultado.user.displayName}`,
@@ -133,11 +143,23 @@ const iniciarGoogle = async () => {
   } catch (error) {
     console.error(error);
 
+    // El usuario cerró el popup o canceló: no es un error real, no molestamos con una alerta.
+    if (
+      error.code === "auth/popup-closed-by-user" ||
+      error.code === "auth/cancelled-popup-request"
+    ) {
+      return;
+    }
+
     Swal.fire({
       icon: "error",
       title: "Error",
       text: "Error al iniciar sesión con Google",
+      confirmButtonText: "Aceptar",
+      showCloseButton: true,
     });
+  } finally {
+    cargando.value = false;
   }
 };
 </script>
@@ -234,19 +256,6 @@ const iniciarGoogle = async () => {
   animation: fadeInDown 0.7s ease;
 }
 
-.titulo h1 {
-  margin: 0;
-
-  color: #d7f5e6;
-
-  text-align: center;
-
-  font-size: 2rem;
-  font-weight: 700;
-
-  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
-}
-
 /* Tarjeta */
 
 .inicio-sesion {
@@ -313,6 +322,11 @@ const iniciarGoogle = async () => {
   box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.18);
 }
 
+.inicio-sesion input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Botones */
 
 .inicio-sesion button {
@@ -345,6 +359,13 @@ const iniciarGoogle = async () => {
 
 .inicio-sesion button:active {
   transform: scale(0.97);
+}
+
+.inicio-sesion button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Botón Google */
@@ -381,10 +402,6 @@ const iniciarGoogle = async () => {
   transform: translateY(-2px);
 
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.google-btn::before {
-  background-image: url("data:image/svg+xml,...");
 }
 
 /* Enlace */
