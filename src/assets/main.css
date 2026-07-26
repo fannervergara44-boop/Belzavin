@@ -1,0 +1,84 @@
+@import "./base.css";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+#app {
+  min-height: 100vh;
+  width: 100%;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+/* Estilo general de SweetAlert2 */
+.swal2-popup {
+  width: 350px !important;
+  border-radius: 18px !important;
+  padding: 25px !important;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: aparecer 0.25s ease;
+}
+
+.swal2-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.swal2-html-container {
+  font-size: 14px !important;
+}
+
+.swal2-icon {
+  transform: scale(0.9);
+  margin: 15px auto !important;
+}
+
+.swal2-confirm {
+  border-radius: 8px !important;
+  padding: 8px 25px !important;
+  font-size: 14px !important;
+}
+
+.swal2-close {
+  background: #dc3545 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  line-height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 10px !important;
+  transition: all 0.2s ease;
+}
+
+.swal2-close:hover {
+  background: #bb2d3b !important;
+  transform: scale(1.1);
+}
+
+@keyframes aparecer {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
