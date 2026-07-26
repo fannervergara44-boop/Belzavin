@@ -185,8 +185,14 @@ const irAMateriasDesdeBienvenida = () => {
 
 onMounted(() => {
   const usuario = authStore.usuario;
-  if (usuario?.metadata?.creationTime === usuario?.metadata?.lastSignInTime) {
+  if (!usuario) return;
+
+  const esRegistroNuevo = usuario.metadata?.creationTime === usuario.metadata?.lastSignInTime;
+  const yaVioBienvenida = localStorage.getItem(`bienvenida_vista_${usuario.uid}`);
+
+  if (esRegistroNuevo && !yaVioBienvenida) {
     mostrarBienvenida.value = true;
+    localStorage.setItem(`bienvenida_vista_${usuario.uid}`, "true");
   }
 });
 </script>
