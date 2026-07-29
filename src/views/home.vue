@@ -74,6 +74,12 @@
             </p>
           </div>
 
+          <div v-else-if="claseRecienTerminada" class="clase-terminada">
+            <p>
+              Terminó tu clase de <strong>{{ claseRecienTerminada.nombre }}</strong> 👋
+            </p>
+          </div>
+
           <div v-if="proximasClasesHoy.length > 0" class="proximas-hoy">
             <p class="proximas-titulo">
               {{ claseActual ? "Después tienes:" : "Más tarde hoy:" }}
@@ -83,11 +89,17 @@
             </div>
           </div>
 
-          <div v-else-if="!claseActual && clasesDeHoy.length === 0" class="hoy-vacio">
+          <div
+            v-else-if="!claseActual && !claseRecienTerminada && clasesDeHoy.length === 0"
+            class="hoy-vacio"
+          >
             No tienes clases programadas hoy
           </div>
 
-          <div v-else-if="!claseActual && clasesDeHoy.length > 0" class="hoy-vacio">
+          <div
+            v-else-if="!claseActual && !claseRecienTerminada && clasesDeHoy.length > 0"
+            class="hoy-vacio"
+          >
             Ya terminaron todas tus clases de hoy
           </div>
         </div>
@@ -141,7 +153,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import Sidebar from "../layout/Sidebar.vue";
 import { useAuthStore } from "../stores/auth";
@@ -188,7 +200,7 @@ const diaHoy = computed(() => diasSemana[new Date().getDay()]);
 const clasesDeHoy = computed(() =>
   materiasStore.materias
     .filter((m) => m.horario?.dia === diaHoy.value)
-    .sort((a, b) => (a.horario.horaInicio || "").localeCompare(b.horario.horaInicio || "")),
+    .sort((a, b) => (a.horario?.horaInicio || "").localeCompare(b.horario?.horaInicio || "")),
 );
 
 // --- Reloj reactivo: hora actual en formato "HH:MM", se actualiza sola ---
@@ -202,17 +214,37 @@ function obtenerHoraActual() {
 const horaActual = ref(obtenerHoraActual());
 let intervaloReloj = null;
 
-// Materia que está en curso justo ahora (si hay alguna)
+// Materia que está en curso justo ahora (si hay alguna).
+// Se protege con ?. por si algún horario quedó incompleto en Firestore.
 const claseActual = computed(() =>
   clasesDeHoy.value.find(
-    (m) => horaActual.value >= m.horario.horaInicio && horaActual.value <= m.horario.horaFin,
+    (m) =>
+      m.horario?.horaInicio &&
+      m.horario?.horaFin &&
+      horaActual.value >= m.horario.horaInicio &&
+      horaActual.value <= m.horario.horaFin,
   ),
 );
 
 // Materias de hoy que todavía no han empezado
 const proximasClasesHoy = computed(() =>
-  clasesDeHoy.value.filter((m) => m.horario.horaInicio > horaActual.value),
+  clasesDeHoy.value.filter((m) => m.horario?.horaInicio && m.horario.horaInicio > horaActual.value),
 );
+
+// Mensaje temporal: se llena justo cuando una clase termina, y se borra sola después
+const claseRecienTerminada = ref(null);
+let timeoutMensaje = null;
+
+watch(claseActual, (nuevaClase, claseAnterior) => {
+  if (!nuevaClase && claseAnterior) {
+    claseRecienTerminada.value = claseAnterior;
+
+    clearTimeout(timeoutMensaje);
+    timeoutMensaje = setTimeout(() => {
+      claseRecienTerminada.value = null;
+    }, 10000); // el mensaje dura 10 segundos
+  }
+});
 
 const mostrarBienvenida = ref(false);
 const irAMateriasDesdeBienvenida = () => {
@@ -239,6 +271,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   clearInterval(intervaloReloj);
+  clearTimeout(timeoutMensaje);
 });
 </script>
 
@@ -601,6 +634,23 @@ onUnmounted(() => {
   border-radius: 50%;
   background: #7ee6a8;
   animation: pulsoLive 1.6s infinite;
+}
+
+.clase-terminada {
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.clase-terminada p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(230, 255, 242, 0.75);
+}
+
+.clase-terminada strong {
+  color: #a8e6c9;
 }
 
 .proximas-hoy {
