@@ -211,24 +211,36 @@ function obtenerHoraActual() {
   return `${horas}:${minutos}`;
 }
 
+// Convierte "HH:MM" (con o sin cero adelante) a minutos desde medianoche.
+// Comparar horas como strings es frágil ("09:05" <= "9:00" da true por ser
+// comparación de caracteres), así que todo pasa a número antes de comparar.
+function horaAMinutos(horaStr) {
+  if (!horaStr) return null;
+  const [h, m] = horaStr.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  return h * 60 + m;
+}
+
 const horaActual = ref(obtenerHoraActual());
+const minutosActuales = computed(() => horaAMinutos(horaActual.value));
 let intervaloReloj = null;
 
 // Materia que está en curso justo ahora (si hay alguna).
-// Se protege con ?. por si algún horario quedó incompleto en Firestore.
 const claseActual = computed(() =>
-  clasesDeHoy.value.find(
-    (m) =>
-      m.horario?.horaInicio &&
-      m.horario?.horaFin &&
-      horaActual.value >= m.horario.horaInicio &&
-      horaActual.value <= m.horario.horaFin,
-  ),
+  clasesDeHoy.value.find((m) => {
+    const inicio = horaAMinutos(m.horario?.horaInicio);
+    const fin = horaAMinutos(m.horario?.horaFin);
+    if (inicio === null || fin === null) return false;
+    return minutosActuales.value >= inicio && minutosActuales.value <= fin;
+  }),
 );
 
 // Materias de hoy que todavía no han empezado
 const proximasClasesHoy = computed(() =>
-  clasesDeHoy.value.filter((m) => m.horario?.horaInicio && m.horario.horaInicio > horaActual.value),
+  clasesDeHoy.value.filter((m) => {
+    const inicio = horaAMinutos(m.horario?.horaInicio);
+    return inicio !== null && inicio > minutosActuales.value;
+  }),
 );
 
 // Mensaje temporal: se llena justo cuando una clase termina, y se borra sola después
@@ -266,7 +278,7 @@ onMounted(() => {
 
   intervaloReloj = setInterval(() => {
     horaActual.value = obtenerHoraActual();
-  }, 30000); // revisa cada 30 segundos
+  }, 15000); // revisa cada 15 segundos
 });
 
 onUnmounted(() => {
