@@ -65,9 +65,19 @@
 
         <div class="widget-hoy">
           <h3>Hoy es {{ diaHoy }}</h3>
-          <div v-if="clasesDeHoy.length === 0" class="hoy-vacio">
+
+          <div v-if="claseActual" class="clase-en-curso">
+            <span class="pulso"></span>
+            <p>
+              Ahora mismo tienes clase de <strong>{{ claseActual.nombre }}</strong> (hasta las
+              {{ claseActual.horario.horaFin }})
+            </p>
+          </div>
+
+          <div v-else-if="clasesDeHoy.length === 0" class="hoy-vacio">
             No tienes clases programadas hoy
           </div>
+
           <div v-else class="lista-hoy">
             <div v-for="materia in clasesDeHoy" :key="materia.id" class="clase-hoy">
               <p>
@@ -127,7 +137,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import Sidebar from "../layout/Sidebar.vue";
 import { useAuthStore } from "../stores/auth";
@@ -177,6 +187,24 @@ const clasesDeHoy = computed(() =>
     .sort((a, b) => (a.horario.horaInicio || "").localeCompare(b.horario.horaInicio || "")),
 );
 
+// --- Reloj reactivo: hora actual en formato "HH:MM", se actualiza sola ---
+function obtenerHoraActual() {
+  const ahora = new Date();
+  const horas = String(ahora.getHours()).padStart(2, "0");
+  const minutos = String(ahora.getMinutes()).padStart(2, "0");
+  return `${horas}:${minutos}`;
+}
+
+const horaActual = ref(obtenerHoraActual());
+let intervaloReloj = null;
+
+// Materia que está en curso justo ahora (si hay alguna)
+const claseActual = computed(() =>
+  clasesDeHoy.value.find(
+    (m) => horaActual.value >= m.horario.horaInicio && horaActual.value <= m.horario.horaFin,
+  ),
+);
+
 const mostrarBienvenida = ref(false);
 const irAMateriasDesdeBienvenida = () => {
   mostrarBienvenida.value = false;
@@ -185,15 +213,23 @@ const irAMateriasDesdeBienvenida = () => {
 
 onMounted(() => {
   const usuario = authStore.usuario;
-  if (!usuario) return;
+  if (usuario) {
+    const esRegistroNuevo = usuario.metadata?.creationTime === usuario.metadata?.lastSignInTime;
+    const yaVioBienvenida = localStorage.getItem(`bienvenida_vista_${usuario.uid}`);
 
-  const esRegistroNuevo = usuario.metadata?.creationTime === usuario.metadata?.lastSignInTime;
-  const yaVioBienvenida = localStorage.getItem(`bienvenida_vista_${usuario.uid}`);
-
-  if (esRegistroNuevo && !yaVioBienvenida) {
-    mostrarBienvenida.value = true;
-    localStorage.setItem(`bienvenida_vista_${usuario.uid}`, "true");
+    if (esRegistroNuevo && !yaVioBienvenida) {
+      mostrarBienvenida.value = true;
+      localStorage.setItem(`bienvenida_vista_${usuario.uid}`, "true");
+    }
   }
+
+  intervaloReloj = setInterval(() => {
+    horaActual.value = obtenerHoraActual();
+  }, 30000); // revisa cada 30 segundos
+});
+
+onUnmounted(() => {
+  clearInterval(intervaloReloj);
 });
 </script>
 
@@ -237,6 +273,18 @@ onMounted(() => {
   }
   50% {
     transform: translate(-25px, 25px) scale(1.05);
+  }
+}
+
+@keyframes pulsoLive {
+  0% {
+    box-shadow: 0 0 0 0 rgba(126, 230, 168, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(126, 230, 168, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(126, 230, 168, 0);
   }
 }
 
@@ -531,6 +579,36 @@ onMounted(() => {
 .clase-hoy strong {
   color: #a8e6c9;
 }
+
+.clase-en-curso {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: rgba(126, 230, 168, 0.12);
+  border: 1px solid rgba(126, 230, 168, 0.35);
+}
+
+.clase-en-curso p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #e6fff2;
+}
+
+.clase-en-curso strong {
+  color: #7ee6a8;
+}
+
+.pulso {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7ee6a8;
+  animation: pulsoLive 1.6s infinite;
+}
+
 .resumen-materias {
   width: 100%;
   display: flex;
