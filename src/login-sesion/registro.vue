@@ -26,10 +26,9 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -43,6 +42,7 @@ import Swal from "sweetalert2";
 import belzavin from "@/components/belzavin.vue";
 
 const authStore = useAuthStore();
+const router = useRouter();
 
 const user = ref("");
 const correo = ref("");
@@ -116,6 +116,7 @@ const registrar = async () => {
     user.value = "";
     correo.value = "";
     clave.value = "";
+    router.push("/inicio_sesion");
   } catch (error) {
     console.error(error);
     switch (error.code) {
