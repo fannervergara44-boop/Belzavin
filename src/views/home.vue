@@ -74,17 +74,21 @@
             </p>
           </div>
 
-          <div v-else-if="clasesDeHoy.length === 0" class="hoy-vacio">
+          <div v-if="proximasClasesHoy.length > 0" class="proximas-hoy">
+            <p class="proximas-titulo">
+              {{ claseActual ? "Después tienes:" : "Más tarde hoy:" }}
+            </p>
+            <div v-for="materia in proximasClasesHoy" :key="materia.id" class="clase-proxima">
+              <strong>{{ materia.nombre }}</strong> a las {{ materia.horario.horaInicio }}
+            </div>
+          </div>
+
+          <div v-else-if="!claseActual && clasesDeHoy.length === 0" class="hoy-vacio">
             No tienes clases programadas hoy
           </div>
 
-          <div v-else class="lista-hoy">
-            <div v-for="materia in clasesDeHoy" :key="materia.id" class="clase-hoy">
-              <p>
-                Hoy tienes clase de <strong>{{ materia.nombre }}</strong> de
-                {{ materia.horario.horaInicio }} a {{ materia.horario.horaFin }}
-              </p>
-            </div>
+          <div v-else-if="!claseActual && clasesDeHoy.length > 0" class="hoy-vacio">
+            Ya terminaron todas tus clases de hoy
           </div>
         </div>
 
@@ -203,6 +207,11 @@ const claseActual = computed(() =>
   clasesDeHoy.value.find(
     (m) => horaActual.value >= m.horario.horaInicio && horaActual.value <= m.horario.horaFin,
   ),
+);
+
+// Materias de hoy que todavía no han empezado
+const proximasClasesHoy = computed(() =>
+  clasesDeHoy.value.filter((m) => m.horario.horaInicio > horaActual.value),
 );
 
 const mostrarBienvenida = ref(false);
@@ -565,21 +574,6 @@ onUnmounted(() => {
   font-size: 0.9rem;
 }
 
-.lista-hoy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.clase-hoy {
-  font-size: 0.9rem;
-  color: rgba(230, 255, 242, 0.85);
-}
-
-.clase-hoy strong {
-  color: #a8e6c9;
-}
-
 .clase-en-curso {
   display: flex;
   align-items: center;
@@ -607,6 +601,28 @@ onUnmounted(() => {
   border-radius: 50%;
   background: #7ee6a8;
   animation: pulsoLive 1.6s infinite;
+}
+
+.proximas-hoy {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(46, 125, 91, 0.2);
+}
+
+.proximas-titulo {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(230, 255, 242, 0.7);
+}
+
+.clase-proxima {
+  font-size: 0.88rem;
+  color: rgba(230, 255, 242, 0.85);
+  margin-bottom: 0.3rem;
+}
+
+.clase-proxima strong {
+  color: #a8e6c9;
 }
 
 .resumen-materias {
