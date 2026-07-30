@@ -8,6 +8,7 @@ import Horario from "../views/horario.vue";
 import calificación from "@/views/calificación.vue";
 import NotasMateria from "@/views/NotasMateria.vue";
 import Perfil from "@/views/perfil.vue";
+import LayoutConSidebar from "../layout/LayoutConSidebar.vue";
 import { useAuthStore } from "../stores/auth";
 import { watch } from "vue";
 
@@ -15,32 +16,26 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: "/", redirect: { name: "home" } },
-    { path: "/home", name: "home", component: Home, meta: { requiresAuth: true } },
-    { path: "/materias", name: "materias", component: Materias, meta: { requiresAuth: true } },
-    {
-      path: "/materias/:materiaId/notas",
-      name: "notas_materia",
-      component: NotasMateria,
-      meta: { requiresAuth: true },
-    },
-    { path: "/notas", name: "notas", component: Notas, meta: { requiresAuth: true } },
-
-    { path: "/horario", name: "horario", component: Horario, meta: { requiresAuth: true } },
     { path: "/registro", name: "registro", component: Registro },
     { path: "/inicio_sesion", name: "inicio_sesion", component: InicioSesion },
 
     {
-      path: "/calificaciones",
-      name: "calificaciones",
-      component: calificación,
+      path: "/",
+      component: LayoutConSidebar,
       meta: { requiresAuth: true },
-    },
-
-    {
-      path: "/perfil",
-      name: "perfil",
-      component: Perfil,
-      meta: { requiresAuth: true },
+      children: [
+        { path: "home", name: "home", component: Home },
+        { path: "materias", name: "materias", component: Materias },
+        {
+          path: "materias/:materiaId/notas",
+          name: "notas_materia",
+          component: NotasMateria,
+        },
+        { path: "notas", name: "notas", component: Notas },
+        { path: "horario", name: "horario", component: Horario },
+        { path: "calificaciones", name: "calificaciones", component: calificación },
+        { path: "perfil", name: "perfil", component: Perfil },
+      ],
     },
   ],
 });

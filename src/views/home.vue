@@ -61,8 +61,6 @@
       </div>
     </header>
 
-    <Sidebar />
-
     <main class="home-content">
       <section class="dashboard-panel">
         <div class="dashboard-header">
@@ -165,7 +163,6 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
-import Sidebar from "../layout/Sidebar.vue";
 import { useAuthStore } from "../stores/auth";
 import { signOut } from "firebase/auth";
 import { auth } from "../service/firebase";
@@ -559,11 +556,9 @@ onUnmounted(() => {
   z-index: 1;
   flex: 1;
   padding: 7.5rem 1.5rem 2rem;
-  margin-left: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: margin-left 0.25s ease;
 }
 
 .dashboard-panel {
@@ -839,7 +834,6 @@ onUnmounted(() => {
 
   .home-content {
     padding-top: 9.5rem;
-    margin-left: 0;
   }
 
   .dashboard-panel {
