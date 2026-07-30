@@ -1,6 +1,9 @@
 <template>
   <div class="titulo-belzavi">
-    <h1>{{ titulo }}</h1>
+    <div class="titulo-fila">
+      <img v-if="imagen" :src="imagen" alt="" class="titulo-logo" />
+      <h1>{{ titulo }}</h1>
+    </div>
     <p v-if="subtitulo">{{ subtitulo }}</p>
   </div>
 </template>
@@ -15,6 +18,10 @@ defineProps({
     type: String,
     default: "",
   },
+  imagen: {
+    type: String,
+    default: "",
+  },
 });
 </script>
 
@@ -22,6 +29,18 @@ defineProps({
 .titulo-belzavi {
   text-align: center;
   margin-bottom: 35px;
+}
+
+.titulo-fila {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.titulo-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .titulo-belzavi h1 {
@@ -56,6 +75,11 @@ defineProps({
 }
 
 @media (max-width: 768px) {
+  .titulo-logo {
+    width: 36px;
+    height: 36px;
+  }
+
   .titulo-belzavi h1 {
     font-size: 2.2rem;
     letter-spacing: 2px;

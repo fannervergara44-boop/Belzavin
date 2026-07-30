@@ -3,8 +3,8 @@
     <div class="titulo">
       <Belzavin
         titulo="BELZAVIN"
-        subtitulo="Bienvenido. Si ya tienes una cuenta, te invitamos a que inicies sesión y disfrutes de nuestra página.
-"
+        subtitulo="Bienvenido. Si ya tienes una cuenta, te invitamos a que inicies sesión y disfrutes de nuestra página."
+        :imagen="logo"
       />
     </div>
 
@@ -33,6 +33,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../service/firebase";
 import Swal from "sweetalert2";
 import Belzavin from "@/components/belzavin.vue";
+import logo from "@/assets/logo.png";
 
 const correo = ref("");
 const clave = ref("");
