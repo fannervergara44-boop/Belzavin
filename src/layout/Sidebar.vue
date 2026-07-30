@@ -126,6 +126,7 @@ const cerrarMenu = () => {
   .sidebar-abierto {
     position: relative;
     top: 0;
+    margin-top: 9.5rem;
     height: auto;
     max-height: none;
     width: 100%;
