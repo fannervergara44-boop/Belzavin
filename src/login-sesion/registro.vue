@@ -1,32 +1,85 @@
 <template>
   <div class="registro-wrapper">
-    <div class="titulo">
-      <belzavin
-        titulo="BELZAVIN"
-        subtitulo="Bienvenido a belzavin, si aun no tienes cuenta te invitamos a registrarte"
-        :imagen="logo"
-      />
+    <div class="panel-izquierdo">
+      <div class="tarjeta-login">
+        <img :src="logo" alt="Belzavin" class="tarjeta-logo" />
+        <h2 class="tarjeta-titulo">Crear cuenta</h2>
+        <p class="tarjeta-subtitulo">Únete a Belzavin y organiza tu semestre</p>
+
+        <label class="campo">
+          <span class="campo-label">Usuario</span>
+          <input
+            type="text"
+            v-model="user"
+            placeholder="Tu nombre de usuario"
+            :disabled="cargando"
+          />
+        </label>
+
+        <label class="campo">
+          <span class="campo-label">Correo electrónico</span>
+          <input
+            type="email"
+            v-model="correo"
+            placeholder="usuario@universidad.edu.co"
+            :disabled="cargando"
+          />
+        </label>
+
+        <label class="campo">
+          <span class="campo-label">Contraseña</span>
+          <input
+            type="password"
+            v-model="clave"
+            placeholder="Crea una contraseña"
+            :disabled="cargando"
+          />
+        </label>
+
+        <button class="btn-primario" @click="registrar" :disabled="cargando">
+          {{ cargando ? "Registrando..." : "Registrarse" }}
+        </button>
+
+        <div class="separador"><span>o</span></div>
+
+        <button class="btn-google" @click="registrarGoogle" :disabled="cargando">
+          Registrarse con Google
+        </button>
+
+        <RouterLink to="/inicio_sesion" class="link">
+          ¿Ya tienes cuenta? <strong>Inicia sesión</strong>
+        </RouterLink>
+      </div>
     </div>
 
-    <div class="registro">
-      <input type="text" v-model="user" placeholder="Usuario" :disabled="cargando" />
+    <div class="panel-derecho">
+      <div class="marca">
+        <img :src="logo" alt="Belzavin" class="marca-logo" />
+        <span class="marca-nombre">BELZAVIN</span>
+      </div>
 
-      <input type="email" v-model="correo" placeholder="Correo electrónico" :disabled="cargando" />
+      <h1 class="titulo-principal">
+        Tu espacio académico <span class="resaltado">en un solo lugar</span>
+      </h1>
 
-      <input type="password" v-model="clave" placeholder="Contraseña" :disabled="cargando" />
+      <p class="descripcion">
+        Organiza tus materias, consulta tus notas, calcula tus promedios y mantén el control de tu
+        semestre.
+      </p>
 
-      <button @click="registrar" :disabled="cargando">
-        {{ cargando ? "Registrando..." : "Registrarse" }}
-      </button>
-
-      <button class="google-btn" @click="registrarGoogle" :disabled="cargando">
-        Registrarse con Google
-      </button>
-
-      <RouterLink to="/inicio_sesion" class="link"> ¿Ya tienes cuenta? Inicia sesión </RouterLink>
+      <ul class="lista-features">
+        <li v-for="feature in features" :key="feature.titulo" class="feature-item">
+          <div class="feature-icono">{{ feature.icono }}</div>
+          <div>
+            <p class="feature-titulo">{{ feature.titulo }}</p>
+            <p class="feature-descripcion">{{ feature.descripcion }}</p>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
@@ -40,7 +93,6 @@ import {
 import { auth } from "../service/firebase";
 import { useAuthStore } from "../stores/auth";
 import Swal from "sweetalert2";
-import belzavin from "@/components/belzavin.vue";
 import logo from "@/assets/logo.png";
 
 const authStore = useAuthStore();
@@ -51,7 +103,21 @@ const correo = ref("");
 const clave = ref("");
 const cargando = ref(false);
 
-// Genera una URL de avatar con las iniciales del nombre
+const features = [
+  {
+    titulo: "Organiza tus materias",
+    descripcion: "Todos tus cursos en un solo lugar.",
+  },
+  {
+    titulo: "Controla tus notas",
+    descripcion: "Registra, consulta y calcula promedios.",
+  },
+  {
+    titulo: "Planifica tu semestre",
+    descripcion: "Agenda tareas, exámenes y actividades.",
+  },
+];
+
 function generarAvatar(nombre) {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=0b5fff&color=fff`;
 }
@@ -73,11 +139,9 @@ const registrar = async () => {
     if (!/[A-Z]/.test(clave.value)) {
       errores.push("Debe tener al menos una letra mayúscula.");
     }
-
     if (!/[0-9]/.test(clave.value)) {
       errores.push("Debe tener al menos un número.");
     }
-
     if (!/[!@#$%^&*]/.test(clave.value)) {
       errores.push("Debe tener al menos un carácter especial.");
     }
@@ -181,8 +245,6 @@ const registrarGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const resultado = await signInWithPopup(auth, provider);
 
-    // Solo sobrescribimos el nombre si es un usuario NUEVO.
-    // Si ya existía una cuenta con este Google, no le pisamos el displayName.
     const infoAdicional = getAdditionalUserInfo(resultado);
     const esNuevo = infoAdicional?.isNewUser;
 
@@ -210,7 +272,6 @@ const registrarGoogle = async () => {
   } catch (error) {
     console.error(error);
 
-    // El usuario cerró el popup o canceló: no es un error real, no molestamos con una alerta.
     if (
       error.code === "auth/popup-closed-by-user" ||
       error.code === "auth/cancelled-popup-request"
@@ -235,18 +296,7 @@ const registrarGoogle = async () => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(25px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -254,240 +304,315 @@ const registrarGoogle = async () => {
   }
 }
 
-@keyframes orbFloat {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(25px, -20px) scale(1.08);
-  }
-}
-
-/* Fondo */
-
 .registro-wrapper {
-  position: relative;
-  overflow: hidden;
-
   min-height: 100vh;
   width: 100%;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
 
-  padding: 2rem 1rem;
+  background: #f4f7fb;
   box-sizing: border-box;
-
-  background: #05080a;
 }
 
-.registro-wrapper::before,
-.registro-wrapper::after {
-  content: "";
-  position: absolute;
+/* Columna izquierda: form */
 
-  border-radius: 50%;
-  filter: blur(60px);
-
-  animation: orbFloat 12s infinite ease-in-out;
+.panel-izquierdo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 5vw;
 }
 
-.registro-wrapper::before {
-  width: 420px;
-  height: 420px;
-
-  top: -120px;
-  left: -120px;
-
-  background: rgba(46, 125, 91, 0.35);
-}
-
-.registro-wrapper::after {
-  width: 450px;
-  height: 450px;
-
-  bottom: -150px;
-  right: -120px;
-
-  background: rgba(11, 95, 255, 0.35);
-
-  animation-delay: 2s;
-}
-
-/* Titulo */
-
-.titulo {
-  z-index: 1;
-
-  margin-bottom: 1.5rem;
-
-  animation: fadeInDown 0.7s ease;
-}
-
-/* Formulario */
-
-.registro {
-  z-index: 1;
-
+.tarjeta-login {
   width: 100%;
-  max-width: 520px;
-
-  padding: 2.5rem 2rem;
+  max-width: 440px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 
-  background: rgba(8, 16, 12, 0.82);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.8rem 2.4rem;
 
-  backdrop-filter: blur(18px);
-
-  border: 1px solid rgba(46, 125, 91, 0.25);
-
-  border-radius: 18px;
-
-  color: white;
-
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.55),
-    0 0 30px rgba(46, 125, 91, 0.1);
-
-  animation: fadeInUp 0.8s ease;
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  animation: fadeInUp 0.7s ease;
 }
 
-/* Inputs */
+.tarjeta-logo {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 0.3rem;
+}
 
-.registro input {
+.tarjeta-titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f1b2d;
+}
+
+.tarjeta-subtitulo {
+  margin: 0 0 0.5rem;
+  color: #7a8aa0;
+  font-size: 0.92rem;
+}
+
+.campo {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 
-  padding: 0.85rem 1rem;
+.campo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3d4a5c;
+}
 
+.campo input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 0.8rem 1rem;
   border-radius: 10px;
+  border: 1px solid #dde4ee;
+  background: #f8fafc;
 
-  border: 1px solid rgba(46, 125, 91, 0.25);
+  font-size: 0.95rem;
+  color: #0f1b2d;
 
-  background: rgba(255, 255, 255, 0.04);
-
-  color: #e6fff2;
-
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.registro input::placeholder {
-  color: rgba(230, 255, 242, 0.5);
+.campo input::placeholder {
+  color: #a3adba;
 }
 
-.registro input:focus {
+.campo input:focus {
   outline: none;
-
-  border-color: #2e7d5b;
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.18);
+  border-color: #0b5fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
 }
 
-.registro input:disabled {
+.campo input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Botones */
-
-.registro button {
-  position: relative;
-  overflow: hidden;
-
+.btn-primario {
   width: 100%;
-
   padding: 0.85rem;
+  margin-top: 0.4rem;
 
   border: none;
   border-radius: 10px;
 
-  background: linear-gradient(135deg, #0b5fff, #2e7d5b);
-
+  background: #0b5fff;
   color: white;
-
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.95rem;
 
   cursor: pointer;
-
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.registro button:hover {
-  transform: translateY(-2px);
-
-  box-shadow: 0 12px 25px rgba(46, 125, 91, 0.3);
+.btn-primario:hover {
+  background: #0a52dd;
 }
 
-.registro button:active {
-  transform: scale(0.97);
-}
-
-.registro button:disabled {
+.btn-primario:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-/* Botón Google */
-
-.google-btn {
+.separador {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #a3adba;
+  font-size: 0.85rem;
+}
+
+.separador::before,
+.separador::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5eaf1;
+}
+
+.btn-google {
+  width: 100%;
+  padding: 0.8rem;
 
   display: flex;
-
   justify-content: center;
   align-items: center;
 
-  gap: 0.7rem;
-
-  padding: 0.85rem;
-
-  background: white;
-
+  background: #ffffff;
   color: #3c4043;
-
-  border: 1px solid #ddd;
-
+  border: 1px solid #dde4ee;
   border-radius: 10px;
+  font-weight: 600;
 
   cursor: pointer;
-
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.google-btn:hover {
-  transform: translateY(-2px);
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.btn-google:hover {
+  border-color: #c4ccd8;
+  box-shadow: 0 4px 12px rgba(15, 27, 45, 0.06);
 }
 
-.google-btn i {
-  color: #4285f4;
-  font-size: 18px;
+.btn-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-/* Link */
+.link {
+  margin-top: 0.4rem;
+  font-size: 0.88rem;
+  color: #7a8aa0;
+  text-decoration: none;
+}
 
-.registro .link {
-  color: #a8e6c9;
+.link strong {
+  color: #0b5fff;
+}
 
-  margin-top: 0.5rem;
-
+.link:hover strong {
   text-decoration: underline;
-
-  transition: 0.25s;
 }
 
-.registro .link:hover {
-  color: #d7f5e6;
+/* Columna derecha: branding */
+
+.panel-derecho {
+  padding: 4rem 5vw;
+  animation: fadeInUp 0.6s ease;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2.5rem;
+}
+
+.marca-logo {
+  width: 34px;
+  height: 34px;
+}
+
+.marca-nombre {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f1b2d;
+  letter-spacing: 0.5px;
+}
+
+.titulo-principal {
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #0f1b2d;
+  margin: 0 0 1.2rem;
+}
+
+.resaltado {
+  color: #0b5fff;
+}
+
+.descripcion {
+  font-size: 1rem;
+  color: #5b6b7f;
+  max-width: 480px;
+  margin: 0 0 2.5rem;
+  line-height: 1.6;
+}
+
+.lista-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.feature-icono {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.2rem;
+  border-radius: 12px;
+  background: #eaf1ff;
+}
+
+.feature-titulo {
+  margin: 0;
+  font-weight: 700;
+  color: #0f1b2d;
+  font-size: 0.98rem;
+}
+
+.feature-descripcion {
+  margin: 0.15rem 0 0;
+  color: #7a8aa0;
+  font-size: 0.88rem;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .registro-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-izquierdo {
+    order: 1;
+  }
+
+  .panel-derecho {
+    order: 2;
+    padding: 3rem 6vw 1.5rem;
+    text-align: center;
+  }
+
+  .marca,
+  .lista-features {
+    align-items: center;
+  }
+
+  .marca {
+    justify-content: center;
+  }
+
+  .descripcion {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .feature-item {
+    text-align: left;
+  }
 }
 </style>

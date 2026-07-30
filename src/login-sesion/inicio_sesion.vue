@@ -1,27 +1,71 @@
 <template>
-  <div class="inicio-sesion-wrapper">
-    <div class="titulo">
-      <Belzavin
-        titulo="BELZAVIN"
-        subtitulo="Bienvenido. Si ya tienes una cuenta, te invitamos a que inicies sesión y disfrutes de nuestra página."
-        :imagen="logo"
-      />
+  <div class="login-wrapper">
+    <div class="panel-izquierdo">
+      <div class="marca">
+        <img :src="logo" alt="Belzavin" class="marca-logo" />
+        <span class="marca-nombre">BELZAVIN</span>
+      </div>
+
+      <h1 class="titulo-principal">
+        Tu espacio académico <span class="resaltado">en un solo lugar</span>
+      </h1>
+
+      <p class="descripcion">
+        Organiza tus materias, consulta tus notas, calcula tus promedios y mantén el control de tu
+        semestre.
+      </p>
+
+      <ul class="lista-features">
+        <li v-for="feature in features" :key="feature.titulo" class="feature-item">
+          <div class="feature-icono">{{ feature.icono }}</div>
+          <div>
+            <p class="feature-titulo">{{ feature.titulo }}</p>
+            <p class="feature-descripcion">{{ feature.descripcion }}</p>
+          </div>
+        </li>
+      </ul>
     </div>
 
-    <div class="inicio-sesion">
-      <input type="email" v-model="correo" placeholder="Correo electrónico" :disabled="cargando" />
+    <div class="panel-derecho">
+      <div class="tarjeta-login">
+        <img :src="logo" alt="Belzavin" class="tarjeta-logo" />
+        <h2 class="tarjeta-titulo">Iniciar sesión</h2>
+        <p class="tarjeta-subtitulo">Bienvenido de nuevo a Belzavin</p>
 
-      <input type="password" v-model="clave" placeholder="Contraseña" :disabled="cargando" />
+        <label class="campo">
+          <span class="campo-label">Correo electrónico</span>
+          <input
+            type="email"
+            v-model="correo"
+            placeholder="usuario@universidad.edu.co"
+            :disabled="cargando"
+          />
+        </label>
 
-      <button @click="iniciarSesion" :disabled="cargando">
-        {{ cargando ? "Entrando..." : "Entrar" }}
-      </button>
+        <label class="campo">
+          <span class="campo-label">Contraseña</span>
+          <input
+            type="password"
+            v-model="clave"
+            placeholder="Ingresa tu contraseña"
+            :disabled="cargando"
+          />
+        </label>
 
-      <button class="google-btn" @click="iniciarGoogle" :disabled="cargando">
-        Iniciar con Google
-      </button>
+        <button class="btn-primario" @click="iniciarSesion" :disabled="cargando">
+          {{ cargando ? "Entrando..." : "Iniciar sesión" }}
+        </button>
 
-      <RouterLink to="/registro" class="link"> ¿No tienes cuenta? Regístrate </RouterLink>
+        <div class="separador"><span>o</span></div>
+
+        <button class="btn-google" @click="iniciarGoogle" :disabled="cargando">
+          Continuar con Google
+        </button>
+
+        <RouterLink to="/registro" class="link">
+          ¿No tienes cuenta? <strong>Crear cuenta</strong>
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
@@ -32,13 +76,27 @@ import { RouterLink, useRouter } from "vue-router";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../service/firebase";
 import Swal from "sweetalert2";
-import Belzavin from "@/components/belzavin.vue";
 import logo from "@/assets/logo.png";
 
 const correo = ref("");
 const clave = ref("");
 const cargando = ref(false);
 const router = useRouter();
+
+const features = [
+  {
+    titulo: "Organiza tus materias",
+    descripcion: "Todos tus cursos en un solo lugar.",
+  },
+  {
+    titulo: "Controla tus notas",
+    descripcion: "Registra, consulta y calcula promedios.",
+  },
+  {
+    titulo: "Planifica tu semestre",
+    descripcion: "Agenda tareas, exámenes y actividades.",
+  },
+];
 
 const iniciarSesion = async () => {
   const errores = [];
@@ -89,7 +147,6 @@ const iniciarSesion = async () => {
           showCloseButton: true,
         });
         break;
-
       case "auth/wrong-password":
         Swal.fire({
           icon: "error",
@@ -127,7 +184,6 @@ const iniciarGoogle = async () => {
 
   try {
     const provider = new GoogleAuthProvider();
-
     const resultado = await signInWithPopup(auth, provider);
 
     console.log("Usuario Google:", resultado.user);
@@ -136,7 +192,7 @@ const iniciarGoogle = async () => {
       icon: "success",
       title: "Bienvenido",
       text: `Bienvenido ${resultado.user.displayName}`,
-      confirmButtonText: "aceptar",
+      confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
 
@@ -144,7 +200,6 @@ const iniciarGoogle = async () => {
   } catch (error) {
     console.error(error);
 
-    // El usuario cerró el popup o canceló: no es un error real, no molestamos con una alerta.
     if (
       error.code === "auth/popup-closed-by-user" ||
       error.code === "auth/cancelled-popup-request"
@@ -169,18 +224,7 @@ const iniciarGoogle = async () => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(25px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -188,234 +232,310 @@ const iniciarGoogle = async () => {
   }
 }
 
-@keyframes orbFloat {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(25px, -20px) scale(1.08);
-  }
-}
-
-.inicio-sesion-wrapper {
-  position: relative;
-  overflow: hidden;
-
+.login-wrapper {
   min-height: 100vh;
   width: 100%;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
 
-  padding: 2rem 1rem;
+  background: #f4f7fb;
   box-sizing: border-box;
-
-  background: #05080a;
 }
 
-/* Orbes de fondo */
+/* Columna izquierda */
 
-.inicio-sesion-wrapper::before,
-.inicio-sesion-wrapper::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-  animation: orbFloat 12s infinite ease-in-out;
+.panel-izquierdo {
+  padding: 4rem 5vw;
+  animation: fadeInUp 0.6s ease;
 }
 
-.inicio-sesion-wrapper::before {
-  width: 420px;
-  height: 420px;
-  top: -120px;
-  left: -120px;
-
-  background: rgba(46, 125, 91, 0.35);
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2.5rem;
 }
 
-.inicio-sesion-wrapper::after {
-  width: 450px;
-  height: 450px;
-  bottom: -150px;
-  right: -120px;
-
-  background: rgba(11, 95, 255, 0.35);
-
-  animation-delay: 2s;
+.marca-logo {
+  width: 34px;
+  height: 34px;
 }
 
-/* Titulo */
-
-.titulo {
-  z-index: 1;
-  margin-bottom: 1.5rem;
-
-  animation: fadeInDown 0.7s ease;
+.marca-nombre {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f1b2d;
+  letter-spacing: 0.5px;
 }
 
-/* Tarjeta */
+.titulo-principal {
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  color: #0f1b2d;
+  margin: 0 0 1.2rem;
+}
 
-.inicio-sesion {
-  z-index: 1;
+.resaltado {
+  color: #0b5fff;
+}
 
+.descripcion {
+  font-size: 1rem;
+  color: #5b6b7f;
+  max-width: 480px;
+  margin: 0 0 2.5rem;
+  line-height: 1.6;
+}
+
+.lista-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+}
+
+.feature-icono {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.2rem;
+  border-radius: 12px;
+  background: #eaf1ff;
+}
+
+.feature-titulo {
+  margin: 0;
+  font-weight: 700;
+  color: #0f1b2d;
+  font-size: 0.98rem;
+}
+
+.feature-descripcion {
+  margin: 0.15rem 0 0;
+  color: #7a8aa0;
+  font-size: 0.88rem;
+}
+
+/* Columna derecha */
+
+.panel-derecho {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 5vw;
+}
+
+.tarjeta-login {
   width: 100%;
-  max-width: 520px;
-
-  padding: 2.5rem 2rem;
+  max-width: 440px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 
-  background: rgba(8, 16, 12, 0.82);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.8rem 2.4rem;
 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  border: 1px solid rgba(46, 125, 91, 0.25);
-  border-radius: 18px;
-
-  color: white;
-
-  box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.55),
-    0 0 30px rgba(46, 125, 91, 0.1);
-
-  animation: fadeInUp 0.8s ease;
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  animation: fadeInUp 0.7s ease;
 }
 
-/* Inputs */
+.tarjeta-logo {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 0.3rem;
+}
 
-.inicio-sesion input {
+.tarjeta-titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f1b2d;
+}
+
+.tarjeta-subtitulo {
+  margin: 0 0 0.5rem;
+  color: #7a8aa0;
+  font-size: 0.92rem;
+}
+
+.campo {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
 
-  padding: 0.85rem 1rem;
+.campo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3d4a5c;
+}
 
+.campo input {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 0.8rem 1rem;
   border-radius: 10px;
-
-  border: 1px solid rgba(46, 125, 91, 0.25);
-
-  background: rgba(255, 255, 255, 0.04);
-
-  color: #e6fff2;
+  border: 1px solid #dde4ee;
+  background: #f8fafc;
 
   font-size: 0.95rem;
+  color: #0f1b2d;
 
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.inicio-sesion input::placeholder {
-  color: rgba(230, 255, 242, 0.5);
+.campo input::placeholder {
+  color: #a3adba;
 }
 
-.inicio-sesion input:focus {
+.campo input:focus {
   outline: none;
-
-  border-color: #2e7d5b;
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.18);
+  border-color: #0b5fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
 }
 
-.inicio-sesion input:disabled {
+.campo input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Botones */
-
-.inicio-sesion button {
-  position: relative;
-  overflow: hidden;
-
+.btn-primario {
   width: 100%;
-
   padding: 0.85rem;
+  margin-top: 0.4rem;
 
   border: none;
   border-radius: 10px;
 
-  background: linear-gradient(135deg, #0b5fff, #2e7d5b);
-
+  background: #0b5fff;
   color: white;
-
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.95rem;
 
   cursor: pointer;
-
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.inicio-sesion button:hover {
-  transform: translateY(-2px);
-
-  box-shadow: 0 12px 25px rgba(46, 125, 91, 0.3);
+.btn-primario:hover {
+  background: #0a52dd;
 }
 
-.inicio-sesion button:active {
-  transform: scale(0.97);
-}
-
-.inicio-sesion button:disabled {
+.btn-primario:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
-/* Botón Google */
-
-.google-btn {
+.separador {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #a3adba;
+  font-size: 0.85rem;
+}
+
+.separador::before,
+.separador::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5eaf1;
+}
+
+.btn-google {
+  width: 100%;
+  padding: 0.8rem;
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  gap: 0.7rem;
-
-  padding: 0.85rem;
-
-  margin-top: 0.3rem;
-
-  background: white;
-
+  background: #ffffff;
   color: #3c4043;
-
-  border: 1px solid #ddd;
-
+  border: 1px solid #dde4ee;
   border-radius: 10px;
-
-  font-weight: 500;
+  font-weight: 600;
 
   cursor: pointer;
-
-  transition: 0.25s ease;
+  transition: 0.2s ease;
 }
 
-.google-btn:hover {
-  transform: translateY(-2px);
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+.btn-google:hover {
+  border-color: #c4ccd8;
+  box-shadow: 0 4px 12px rgba(15, 27, 45, 0.06);
 }
 
-/* Enlace */
+.btn-google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-.inicio-sesion .link {
-  color: #a8e6c9;
+.link {
+  margin-top: 0.4rem;
+  font-size: 0.88rem;
+  color: #7a8aa0;
+  text-decoration: none;
+}
 
+.link strong {
+  color: #0b5fff;
+}
+
+.link:hover strong {
   text-decoration: underline;
-
-  transition: 0.25s;
 }
 
-.inicio-sesion .link:hover {
-  color: #d7f5e6;
+/* Responsive */
+
+@media (max-width: 900px) {
+  .login-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-izquierdo {
+    padding: 3rem 6vw 1.5rem;
+    text-align: center;
+  }
+
+  .marca,
+  .lista-features {
+    align-items: center;
+  }
+
+  .marca {
+    justify-content: center;
+  }
+
+  .descripcion {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .feature-item {
+    text-align: left;
+  }
 }
 </style>

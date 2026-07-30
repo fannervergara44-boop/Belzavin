@@ -16,6 +16,8 @@
     </div>
 
     <header class="top-bar">
+      <img :src="logo" alt="Logo Belzavin" class="logo-top-bar" />
+
       <div v-if="authStore.cargando" class="user-bar user-bar-empty">
         <p>Cargando...</p>
       </div>
@@ -162,6 +164,7 @@ import { auth } from "../service/firebase";
 import { useMateriasStore } from "../stores/materias";
 import Titulo from "@/components/titulo.vue";
 import Swal from "sweetalert2";
+import logo from "@/assets/logo.png";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -434,22 +437,33 @@ onUnmounted(() => {
   z-index: 10;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.5rem;
+}
+
+.logo-top-bar {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .user-bar {
+  flex: 1;
   max-width: 1120px;
-  width: 100%;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 1.5rem;
+  padding: 0.4rem 0;
 }
 
 .user-bar-empty {
   justify-content: center;
-  padding: 1rem 1.5rem;
+  padding: 0.4rem 0;
 }
 
 .user-info {
@@ -788,6 +802,14 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .top-bar {
+    padding: 0.5rem 1rem;
+  }
+
+  .logo-top-bar {
+    height: 44px;
+  }
+
   .user-bar {
     flex-direction: column;
     align-items: stretch;
