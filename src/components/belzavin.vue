@@ -26,27 +26,23 @@ defineProps({
 </script>
 
 <style scoped>
-.titulo-belzavi {
-  text-align: center;
-  margin-bottom: 35px;
-}
-
 .titulo-fila {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+  font-size: 3rem;
 }
 
 .titulo-logo {
-  width: 48px;
-  height: 48px;
+  width: 1em;
+  height: 1em;
   object-fit: contain;
 }
 
 .titulo-belzavi h1 {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  font-size: 3rem;
+  font-size: 1em;
   font-weight: 700;
   letter-spacing: 3px;
   color: #3f51b5;
@@ -75,14 +71,8 @@ defineProps({
 }
 
 @media (max-width: 768px) {
-  .titulo-logo {
-    width: 36px;
-    height: 36px;
-  }
-
-  .titulo-belzavi h1 {
+  .titulo-fila {
     font-size: 2.2rem;
-    letter-spacing: 2px;
   }
 
   .titulo-belzavi p {
