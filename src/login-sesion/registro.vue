@@ -4,6 +4,7 @@
       <belzavin
         titulo="BELZAVIN"
         subtitulo="Bienvenido a belzavin, si aun no tienes cuenta te invitamos a registrarte"
+        :imagen="logo"
       />
     </div>
 
@@ -40,6 +41,7 @@ import { auth } from "../service/firebase";
 import { useAuthStore } from "../stores/auth";
 import Swal from "sweetalert2";
 import belzavin from "@/components/belzavin.vue";
+import logo from "@/assets/logo.png";
 
 const authStore = useAuthStore();
 const router = useRouter();
