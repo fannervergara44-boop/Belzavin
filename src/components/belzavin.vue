@@ -26,17 +26,28 @@ defineProps({
 </script>
 
 <style scoped>
-.titulo-fila {
-  display: inline-flex;
+.titulo-belzavi {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.titulo-fila {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   font-size: 3rem;
+  width: 100%;
 }
 
 .titulo-logo {
   width: 1em;
   height: 1em;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .titulo-belzavi h1 {
