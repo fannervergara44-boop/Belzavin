@@ -138,7 +138,7 @@ function promedioCorte(materiaId, corteId) {
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(25px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -157,57 +157,20 @@ function promedioCorte(materiaId, corteId) {
   }
 }
 
-@keyframes orbFloat {
-  50% {
-    transform: translate(25px, -20px) scale(1.08);
-  }
-}
-
 /* Fondo */
 
 .perfil-wrapper {
   position: relative;
-  overflow: hidden;
 
   min-height: 100vh;
   width: 100%;
 
   padding: 2rem 1rem 3rem;
 
-  background: #05080a;
-  color: #e6fff2;
+  background: #f4f7fb;
+  color: #0f1b2d;
 
   box-sizing: border-box;
-}
-
-.perfil-wrapper::before,
-.perfil-wrapper::after {
-  content: "";
-  position: absolute;
-
-  width: 430px;
-  height: 430px;
-
-  border-radius: 50%;
-  filter: blur(60px);
-
-  animation: orbFloat 12s infinite ease-in-out;
-}
-
-.perfil-wrapper::before {
-  top: -120px;
-  left: -120px;
-
-  background: rgba(46, 125, 91, 0.35);
-}
-
-.perfil-wrapper::after {
-  bottom: -150px;
-  right: -120px;
-
-  background: rgba(11, 95, 255, 0.3);
-
-  animation-delay: 2s;
 }
 
 /* Volver */
@@ -227,11 +190,10 @@ function promedioCorte(materiaId, corteId) {
 
   margin: 0 0 1.5rem;
 
-  color: #d7f5e6;
+  color: #0f1b2d;
 
   font-size: 2rem;
-
-  text-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+  font-weight: 800;
 
   animation: fadeDown 0.7s ease;
 }
@@ -252,17 +214,15 @@ function promedioCorte(materiaId, corteId) {
   align-items: center;
   gap: 1.5rem;
 
-  background: rgba(8, 16, 12, 0.82);
+  background: #ffffff;
 
-  backdrop-filter: blur(18px);
-
-  border: 1px solid rgba(46, 125, 91, 0.25);
+  border: 1px solid #e5eaf1;
 
   border-radius: 18px;
 
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
 
-  animation: fadeUp 0.8s ease;
+  animation: fadeUp 0.6s ease;
 }
 
 .perfil-avatar {
@@ -273,7 +233,7 @@ function promedioCorte(materiaId, corteId) {
 
   object-fit: cover;
 
-  border: 2px solid rgba(46, 125, 91, 0.5);
+  border: 2px solid #dde4ee;
 }
 
 /* Información */
@@ -281,13 +241,13 @@ function promedioCorte(materiaId, corteId) {
 .perfil-info h2 {
   margin: 0;
 
-  color: #f2fff8;
+  color: #0f1b2d;
 }
 
 .email {
   margin: 0.4rem 0 1rem;
 
-  color: rgba(230, 255, 242, 0.6);
+  color: #7a8aa0;
 }
 
 /* Inputs */
@@ -308,21 +268,23 @@ function promedioCorte(materiaId, corteId) {
 
   border-radius: 10px;
 
-  border: 1px solid rgba(46, 125, 91, 0.3);
+  border: 1px solid #dde4ee;
 
-  background: rgba(255, 255, 255, 0.04);
+  background: #f8fafc;
 
-  color: white;
+  color: #0f1b2d;
 
-  transition: 0.25s;
+  transition: 0.2s ease;
 }
 
 .form-editar input:focus {
   outline: none;
 
-  border-color: #2e7d5b;
+  border-color: #0b5fff;
 
-  box-shadow: 0 0 0 3px rgba(46, 125, 91, 0.2);
+  background: #ffffff;
+
+  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
 }
 
 /* Botones */
@@ -336,30 +298,37 @@ function promedioCorte(materiaId, corteId) {
 
   border-radius: 10px;
 
-  font-weight: 600;
+  font-weight: 700;
 
   cursor: pointer;
 
-  transition: 0.25s;
+  transition: 0.2s ease;
 }
 
 .btn-editar,
 .btn-guardar {
-  background: linear-gradient(135deg, #0b5fff, #2e7d5b);
-
-  color: white;
-}
-
-.btn-cancelar {
-  background: rgba(255, 255, 255, 0.08);
+  background: #0b5fff;
 
   color: white;
 }
 
 .btn-editar:hover,
-.btn-guardar:hover,
+.btn-guardar:hover {
+  background: #0a52dd;
+}
+
+.btn-cancelar {
+  background: #ffffff;
+
+  color: #5b6b7f;
+
+  border: 1px solid #dde4ee;
+}
+
 .btn-cancelar:hover {
-  transform: translateY(-2px);
+  border-color: #c4ccd8;
+
+  background: #f8fafc;
 }
 
 /* Historial */
@@ -378,8 +347,9 @@ function promedioCorte(materiaId, corteId) {
 
 .titulo-historial {
   margin-top: 2rem;
+  font-weight: 700;
 
-  color: #d7f5e6;
+  color: #0f1b2d;
 }
 
 .lista-historial {
@@ -393,11 +363,13 @@ function promedioCorte(materiaId, corteId) {
 .materia-historial {
   overflow: hidden;
 
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.14), rgba(46, 125, 91, 0.08));
+  background: #ffffff;
 
-  border: 1px solid rgba(46, 125, 91, 0.18);
+  border: 1px solid #e5eaf1;
 
   border-radius: 12px;
+
+  box-shadow: 0 8px 20px rgba(15, 27, 45, 0.06);
 
   animation: fadeUp 0.5s ease;
 }
@@ -415,11 +387,11 @@ function promedioCorte(materiaId, corteId) {
 }
 
 .materia-resumen strong {
-  color: #f2fff8;
+  color: #0f1b2d;
 }
 
 .docente {
-  color: rgba(230, 255, 242, 0.55);
+  color: #7a8aa0;
 
   font-size: 0.9rem;
 }
@@ -429,21 +401,26 @@ function promedioCorte(materiaId, corteId) {
 
   border-radius: 999px;
 
-  background: linear-gradient(135deg, #0b5fff, #2e7d5b);
+  background: #0b5fff;
 
   color: white;
 
   font-size: 0.8rem;
 }
 
-.materia-detalle {
-  padding: 1rem;
+.flecha {
+  color: #a3adba;
+}
 
-  border-top: 1px solid rgba(46, 125, 91, 0.15);
+.materia-detalle {
+  padding: 1rem 1.2rem;
+
+  border-top: 1px solid #e5eaf1;
 }
 
 .corte-titulo {
-  color: #a8e6c9;
+  color: #0b5fff;
+  font-weight: 600;
 }
 
 .corte-detalle li {
@@ -451,12 +428,12 @@ function promedioCorte(materiaId, corteId) {
 
   padding: 0.25rem 0;
 
-  color: rgba(230, 255, 242, 0.7);
+  color: #5b6b7f;
 }
 
 .sin-notas,
 .vacio {
-  color: rgba(230, 255, 242, 0.5);
+  color: #a3adba;
 }
 
 .volver-perfil {

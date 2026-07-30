@@ -38,10 +38,10 @@ const cerrarMenu = () => {
 <style scoped>
 .sidebar {
   width: 130px;
-  background: linear-gradient(180deg, #0a1410 0%, #060b0f 100%);
-  color: #e6fff2;
+  background: #ffffff;
+  color: #0f1b2d;
   padding: 1rem;
-  border-right: 1px solid rgba(46, 125, 91, 0.2);
+  border-right: 1px solid #e5eaf1;
   box-sizing: border-box;
   position: fixed;
   top: var(--top-bar-height, 7.5rem);
@@ -50,7 +50,7 @@ const cerrarMenu = () => {
   max-height: calc(100vh - var(--top-bar-height, 7.5rem));
   overflow: auto;
   z-index: 5;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 0 20px rgba(15, 27, 45, 0.05);
   border-radius: 0 12px 12px 0;
   transition:
     width 0.25s ease,
@@ -65,7 +65,7 @@ const cerrarMenu = () => {
   width: 100%;
   background: transparent;
   border: none;
-  color: #d7f5e6;
+  color: #0f1b2d;
   font-weight: 700;
   padding: 0.5rem 0;
   text-align: left;
@@ -75,12 +75,12 @@ const cerrarMenu = () => {
 }
 
 .collapse-btn:hover {
-  color: #a8e6c9;
+  color: #0b5fff;
 }
 
 .collapse-btn .arrow {
   float: right;
-  color: #a8e6c9;
+  color: #7a8aa0;
 }
 
 .menu-list {
@@ -94,7 +94,7 @@ const cerrarMenu = () => {
 }
 
 .menu-list a {
-  color: rgba(230, 255, 242, 0.85);
+  color: #5b6b7f;
   text-decoration: none;
   padding: 0.5rem 0.75rem;
   display: block;
@@ -108,15 +108,15 @@ const cerrarMenu = () => {
 }
 
 .menu-list a:hover {
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.15), rgba(46, 125, 91, 0.12));
-  color: #f2fff8;
+  background: #eaf1ff;
+  color: #0b5fff;
   transform: translateX(2px);
 }
 
 .menu-list a.router-link-active {
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.25), rgba(46, 125, 91, 0.2));
-  color: #f2fff8;
-  font-weight: 600;
+  background: #eaf1ff;
+  color: #0b5fff;
+  font-weight: 700;
   border-left: 3px solid #0b5fff;
   padding-left: calc(0.75rem - 3px);
 }

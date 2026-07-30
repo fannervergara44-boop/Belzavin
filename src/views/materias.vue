@@ -152,11 +152,11 @@ const eliminarMateria = async (materia) => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -171,67 +171,18 @@ const eliminarMateria = async (materia) => {
   }
 }
 
-@keyframes orbFloatA {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(30px, -20px) scale(1.08);
-  }
-}
-
-@keyframes orbFloatB {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-25px, 25px) scale(1.05);
-  }
-}
-
 .materias-wrapper {
   position: relative;
-  overflow: hidden;
   width: 100%;
   min-height: 100vh;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #e6fff2;
+  color: #0f1b2d;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #05080a;
-}
-
-.materias-wrapper::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(46, 125, 91, 0.4) 0%, rgba(46, 125, 91, 0) 70%);
-  filter: blur(40px);
-  animation: orbFloatA 12s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.materias-wrapper::after {
-  content: "";
-  position: absolute;
-  bottom: -15%;
-  right: -10%;
-  width: 480px;
-  height: 480px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(11, 95, 255, 0.32) 0%, rgba(11, 95, 255, 0) 70%);
-  filter: blur(50px);
-  animation: orbFloatB 14s ease-in-out infinite;
-  pointer-events: none;
+  background: #f4f7fb;
 }
 
 .materias-wrapper h1 {
@@ -240,8 +191,8 @@ const eliminarMateria = async (materia) => {
   margin: 0 0 1.25rem;
   text-align: center;
   font-size: 2rem;
-  color: #d7f5e6;
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+  font-weight: 800;
+  color: #0f1b2d;
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -253,12 +204,12 @@ const eliminarMateria = async (materia) => {
   gap: 0.75rem;
   width: 100%;
   max-width: 480px;
-  background: linear-gradient(180deg, #0a1410 0%, #060b0f 100%);
+  background: #ffffff;
   padding: 1.5rem;
   border-radius: 16px;
-  border: 1px solid rgba(46, 125, 91, 0.25);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
-  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  border: 1px solid #e5eaf1;
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  animation: fadeInUp 0.6s ease both;
 }
 
 .form-materia input,
@@ -266,39 +217,39 @@ const eliminarMateria = async (materia) => {
   width: 100%;
   padding: 0.8rem 1rem;
   border-radius: 10px;
-  border: 1px solid rgba(47, 125, 90, 0.35);
-  background: linear-gradient(135deg, rgba(14, 39, 48, 0.98), rgba(8, 26, 34, 0.98));
-  color: #f2fff8;
+  border: 1px solid #dde4ee;
+  background: #f8fafc;
+  color: #0f1b2d;
   text-align: center;
   appearance: none;
-  box-shadow: inset 0 0 0 1px rgba(74, 166, 116, 0.12);
   transition:
     border-color 0.2s ease,
-    transform 0.2s ease,
+    background 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .form-materia input:focus,
 .form-materia select:focus {
   outline: none;
-  border-color: rgba(74, 166, 116, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 3px rgba(47, 125, 90, 0.22);
+  border-color: #0b5fff;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
 }
 
 .form-materia input::placeholder {
-  color: rgba(230, 240, 255, 0.6);
+  color: #a3adba;
 }
 
 .form-materia select option {
-  background: #0b1418;
-  color: #f2fff8;
+  background: #ffffff;
+  color: #0f1b2d;
 }
 
 .horas {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #5b6b7f;
 }
 
 .horas input {
@@ -306,42 +257,24 @@ const eliminarMateria = async (materia) => {
 }
 
 .form-materia button {
-  position: relative;
-  overflow: hidden;
   padding: 0.85rem;
-  background: linear-gradient(135deg, #0b5fff 0%, #2e7d5b 100%);
+  background: #0b5fff;
   color: #fff;
   border: none;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(11, 95, 255, 0.18);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.form-materia button::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: translateX(-120%);
-  transition: transform 0.5s ease;
-}
-
-.form-materia button:hover::before,
-.form-materia button:focus-visible::before {
-  transform: translateX(120%);
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .form-materia button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(46, 125, 91, 0.28);
+  background: #0a52dd;
 }
 
 .form-materia button:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .materias-content {
@@ -359,15 +292,16 @@ const eliminarMateria = async (materia) => {
   width: 100%;
   padding: 1.25rem;
   border-radius: 16px;
-  background: rgba(10, 20, 16, 0.85);
-  border: 1px solid rgba(46, 125, 91, 0.2);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
 }
 
 .lista-materias-wrapper h2 {
   margin: 0 0 0.9rem;
   font-size: 1.1rem;
-  color: #d7f5e6;
+  font-weight: 700;
+  color: #0f1b2d;
 }
 
 .lista-materias {
@@ -384,22 +318,23 @@ const eliminarMateria = async (materia) => {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.14), rgba(46, 125, 91, 0.08));
+  background: #f8fafc;
   padding: 0.9rem 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(46, 125, 91, 0.18);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
-  color: #e6f0ff;
-  animation: fadeInUp 0.6s ease both;
+  border: 1px solid #dde4ee;
+  color: #0f1b2d;
+  animation: fadeInUp 0.5s ease both;
   cursor: pointer;
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .lista-materias li:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 28px rgba(15, 27, 45, 0.08);
+  border-color: #c4ccd8;
 }
 
 .materia-info {
@@ -408,24 +343,31 @@ const eliminarMateria = async (materia) => {
   gap: 0.2rem;
 }
 
+.materia-info small {
+  color: #7a8aa0;
+}
+
 .btn-eliminar {
   padding: 0.6rem 0.8rem;
   border: none;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 99, 99, 0.95), rgba(188, 44, 44, 0.95));
+  background: #dc2626;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btn-eliminar:hover {
+  background: #b91c1c;
   transform: translateY(-1px);
 }
 
 .lista-vacia {
   margin: 0;
-  color: rgba(230, 255, 242, 0.75);
+  color: #7a8aa0;
   font-size: 0.95rem;
 }
 

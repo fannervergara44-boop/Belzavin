@@ -116,11 +116,11 @@ function estiloEvento(materia) {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -135,64 +135,15 @@ function estiloEvento(materia) {
   }
 }
 
-@keyframes orbFloatA {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(30px, -20px) scale(1.08);
-  }
-}
-
-@keyframes orbFloatB {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-25px, 25px) scale(1.05);
-  }
-}
-
 .horario-wrapper {
   position: relative;
-  overflow: hidden;
   min-height: 100vh;
   max-width: 100%;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #e6fff2;
-  background: #05080a;
+  color: #0f1b2d;
+  background: #f4f7fb;
   box-sizing: border-box;
-}
-
-.horario-wrapper::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(46, 125, 91, 0.4) 0%, rgba(46, 125, 91, 0) 70%);
-  filter: blur(40px);
-  animation: orbFloatA 12s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.horario-wrapper::after {
-  content: "";
-  position: absolute;
-  bottom: -15%;
-  right: -10%;
-  width: 480px;
-  height: 480px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(11, 95, 255, 0.32) 0%, rgba(11, 95, 255, 0) 70%);
-  filter: blur(50px);
-  animation: orbFloatB 14s ease-in-out infinite;
-  pointer-events: none;
 }
 
 .horario-wrapper h1 {
@@ -201,8 +152,8 @@ function estiloEvento(materia) {
   max-width: 900px;
   margin: 0 auto 1.5rem;
   font-size: 2rem;
-  color: #d7f5e6;
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+  font-weight: 800;
+  color: #0f1b2d;
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -212,7 +163,7 @@ function estiloEvento(materia) {
   max-width: 900px;
   margin: 2rem auto 0;
   text-align: center;
-  color: rgba(230, 255, 242, 0.6);
+  color: #7a8aa0;
 }
 
 .grilla {
@@ -221,34 +172,34 @@ function estiloEvento(materia) {
   display: grid;
   max-width: 900px;
   margin: 0 auto;
-  background: linear-gradient(180deg, #0a1410 0%, #060b0f 100%);
-  border: 1px solid rgba(46, 125, 91, 0.25);
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
-  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  animation: fadeInUp 0.6s ease both;
 }
 
 .celda {
-  border: 1px solid rgba(46, 125, 91, 0.08);
+  border: 1px solid #eef2f7;
   padding: 0.3rem 0.5rem;
   font-size: 0.85rem;
 }
 
 .encabezado {
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.25), rgba(46, 125, 91, 0.18));
-  color: #f2fff8;
+  background: #eaf1ff;
+  color: #0f1b2d;
   font-weight: 700;
   text-align: center;
 }
 
 .hora-label {
-  color: rgba(230, 255, 242, 0.55);
+  color: #a3adba;
   text-align: right;
 }
 
 .evento {
-  background: linear-gradient(135deg, #0b5fff 0%, #2e7d5b 100%);
+  background: #0b5fff;
   color: white;
   border-radius: 8px;
   padding: 0.35rem 0.5rem;
@@ -257,7 +208,7 @@ function estiloEvento(materia) {
   margin: 2px;
   overflow: hidden;
   z-index: 1;
-  box-shadow: 0 6px 16px rgba(11, 95, 255, 0.25);
+  box-shadow: 0 6px 16px rgba(11, 95, 255, 0.2);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
@@ -265,7 +216,8 @@ function estiloEvento(materia) {
 
 .evento:hover {
   transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(46, 125, 91, 0.35);
+  background: #0a52dd;
+  box-shadow: 0 8px 20px rgba(11, 95, 255, 0.3);
 }
 
 .volver-horario {

@@ -60,11 +60,11 @@ const promedioMateria = computed(() => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.98);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -79,64 +79,15 @@ const promedioMateria = computed(() => {
   }
 }
 
-@keyframes orbFloatA {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(30px, -20px) scale(1.08);
-  }
-}
-
-@keyframes orbFloatB {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-25px, 25px) scale(1.05);
-  }
-}
-
 .notas-wrapper {
   position: relative;
-  overflow: hidden;
   min-height: 100vh;
   max-width: 100%;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #e6fff2;
-  background: #05080a;
+  color: #0f1b2d;
+  background: #f4f7fb;
   box-sizing: border-box;
-}
-
-.notas-wrapper::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 420px;
-  height: 420px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(46, 125, 91, 0.4) 0%, rgba(46, 125, 91, 0) 70%);
-  filter: blur(40px);
-  animation: orbFloatA 12s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.notas-wrapper::after {
-  content: "";
-  position: absolute;
-  bottom: -15%;
-  right: -10%;
-  width: 480px;
-  height: 480px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(11, 95, 255, 0.32) 0%, rgba(11, 95, 255, 0) 70%);
-  filter: blur(50px);
-  animation: orbFloatB 14s ease-in-out infinite;
-  pointer-events: none;
 }
 
 .volver {
@@ -145,7 +96,7 @@ const promedioMateria = computed(() => {
   display: inline-block;
   max-width: 700px;
   margin: 0 auto 1rem;
-  color: #a8e6c9;
+  color: #0b5fff;
   text-decoration: none;
   font-weight: 600;
   transition: opacity 0.2s ease;
@@ -161,8 +112,8 @@ const promedioMateria = computed(() => {
   max-width: 700px;
   margin: 0 auto;
   font-size: 2rem;
-  color: #d7f5e6;
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+  font-weight: 800;
+  color: #0f1b2d;
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -171,7 +122,7 @@ const promedioMateria = computed(() => {
   z-index: 1;
   max-width: 700px;
   margin: 0 auto 1.5rem;
-  color: rgba(230, 255, 242, 0.75);
+  color: #5b6b7f;
 }
 
 .cortes-lista {
@@ -185,12 +136,12 @@ const promedioMateria = computed(() => {
 }
 
 .corte-row {
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.14), rgba(46, 125, 91, 0.08));
-  border: 1px solid rgba(46, 125, 91, 0.18);
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
   border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 20px rgba(15, 27, 45, 0.06);
   padding: 1.1rem 1.3rem;
-  animation: fadeInUp 0.6s ease both;
+  animation: fadeInUp 0.5s ease both;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -198,7 +149,7 @@ const promedioMateria = computed(() => {
 
 .corte-row:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 12px 28px rgba(15, 27, 45, 0.1);
 }
 
 .corte-info {
@@ -209,11 +160,11 @@ const promedioMateria = computed(() => {
 }
 
 .corte-info strong {
-  color: #f2fff8;
+  color: #0f1b2d;
 }
 
 .promedio-corte {
-  background: linear-gradient(135deg, #0b5fff 0%, #2e7d5b 100%);
+  background: #0b5fff;
   color: white;
   padding: 0.25rem 0.7rem;
   border-radius: 999px;
@@ -226,12 +177,12 @@ const promedioMateria = computed(() => {
   padding: 0;
   margin: 0;
   font-size: 0.9rem;
-  color: rgba(230, 255, 242, 0.8);
+  color: #5b6b7f;
 }
 
 .lista-notas li {
   padding: 0.35rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #eef2f7;
 }
 
 .lista-notas li:last-child {
@@ -240,7 +191,7 @@ const promedioMateria = computed(() => {
 
 .sin-notas {
   font-size: 0.85rem;
-  color: rgba(230, 255, 242, 0.35);
+  color: #a3adba;
   margin: 0;
 }
 

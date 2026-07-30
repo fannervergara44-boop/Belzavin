@@ -105,19 +105,23 @@ const cargando = ref(false);
 
 const features = [
   {
+    icono: "📘",
     titulo: "Organiza tus materias",
     descripcion: "Todos tus cursos en un solo lugar.",
   },
   {
+    icono: "📈",
     titulo: "Controla tus notas",
     descripcion: "Registra, consulta y calcula promedios.",
   },
   {
+    icono: "🗓️",
     titulo: "Planifica tu semestre",
     descripcion: "Agenda tareas, exámenes y actividades.",
   },
 ];
 
+// Genera una URL de avatar con las iniciales del nombre
 function generarAvatar(nombre) {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(nombre)}&background=0b5fff&color=fff`;
 }

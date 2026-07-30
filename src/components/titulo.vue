@@ -27,13 +27,11 @@ defineProps({
 h1 {
   margin: 0;
   font-size: 2.2rem;
-  font-weight: 700;
+  font-weight: 800;
 
-  color: #d7f5e6;
+  color: #0f1b2d;
 
   letter-spacing: 0.5px;
-
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 p {
@@ -42,6 +40,6 @@ p {
   font-size: 1rem;
   font-weight: 400;
 
-  color: rgba(230, 255, 242, 0.65);
+  color: #7a8aa0;
 }
 </style>

@@ -85,14 +85,17 @@ const router = useRouter();
 
 const features = [
   {
+    icono: "📘 ",
     titulo: "Organiza tus materias",
     descripcion: "Todos tus cursos en un solo lugar.",
   },
   {
+    icono: "📈",
     titulo: "Controla tus notas",
     descripcion: "Registra, consulta y calcula promedios.",
   },
   {
+    icono: "🗓️",
     titulo: "Planifica tu semestre",
     descripcion: "Agenda tareas, exámenes y actividades.",
   },
