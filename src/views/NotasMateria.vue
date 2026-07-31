@@ -1,7 +1,5 @@
 <template>
   <div class="notas-wrapper">
-    <botonvolver ruta="/home" texto="Volver al inicio" class="volver-resumen" />
-
     <h1>{{ materia?.nombre }}</h1>
     <p class="promedio-general">Promedio de la materia: {{ promedioMateria.toFixed(1) }}</p>
 
@@ -28,7 +26,6 @@
 import { computed } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { useMateriasStore } from "../stores/materias";
-import botonvolver from "@/components/botonvolver.vue";
 
 const route = useRoute();
 const materiasStore = useMateriasStore();
@@ -85,8 +82,8 @@ const promedioMateria = computed(() => {
   max-width: 100%;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #0f1b2d;
-  background: #f4f7fb;
+  color: var(--color-text);
+  background: var(--color-background);
   box-sizing: border-box;
 }
 
@@ -96,7 +93,7 @@ const promedioMateria = computed(() => {
   display: inline-block;
   max-width: 700px;
   margin: 0 auto 1rem;
-  color: #0b5fff;
+  color: var(--color-link);
   text-decoration: none;
   font-weight: 600;
   transition: opacity 0.2s ease;
@@ -113,7 +110,7 @@ const promedioMateria = computed(() => {
   margin: 0 auto;
   font-size: 2rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -122,7 +119,7 @@ const promedioMateria = computed(() => {
   z-index: 1;
   max-width: 700px;
   margin: 0 auto 1.5rem;
-  color: #5b6b7f;
+  color: var(--color-text-muted);
 }
 
 .cortes-lista {
@@ -136,10 +133,10 @@ const promedioMateria = computed(() => {
 }
 
 .corte-row {
-  background: #ffffff;
-  border: 1px solid #e5eaf1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(15, 27, 45, 0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   padding: 1.1rem 1.3rem;
   animation: fadeInUp 0.5s ease both;
   transition:
@@ -160,11 +157,11 @@ const promedioMateria = computed(() => {
 }
 
 .corte-info strong {
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .promedio-corte {
-  background: #0b5fff;
+  background: var(--color-button);
   color: white;
   padding: 0.25rem 0.7rem;
   border-radius: 999px;
@@ -177,12 +174,12 @@ const promedioMateria = computed(() => {
   padding: 0;
   margin: 0;
   font-size: 0.9rem;
-  color: #5b6b7f;
+  color: var(--color-text-muted);
 }
 
 .lista-notas li {
   padding: 0.35rem 0;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .lista-notas li:last-child {
@@ -191,7 +188,7 @@ const promedioMateria = computed(() => {
 
 .sin-notas {
   font-size: 0.85rem;
-  color: #a3adba;
+  color: var(--color-text-muted);
   margin: 0;
 }
 

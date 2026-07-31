@@ -332,24 +332,24 @@ onUnmounted(() => {
 
 .home {
   /* --- Tokens: estilo belzavin --- */
-  --color-bg: #f4f7fb;
-  --color-surface: #ffffff;
-  --color-border: #dde4ee;
-  --color-border-soft: #e5eaf1;
-  --color-input-bg: #f8fafc;
+  --color-bg: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-border-soft: var(--color-border);
+  --color-input-bg: var(--color-surface-soft);
 
-  --color-brand-blue: #0b5fff;
-  --color-brand-blue-hover: #0a52dd;
-  --color-brand-blue-soft: #eaf1ff;
+  --color-brand-blue: var(--color-accent-strong);
+  --color-brand-blue-hover: var(--color-button-hover);
+  --color-brand-blue-soft: var(--color-accent-soft);
 
-  --color-text: #0f1b2d;
-  --color-text-muted: #5b6b7f;
-  --color-text-faint: #7a8aa0;
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-faint: #8da3c2;
 
-  --color-live: #16a34a;
-  --color-live-soft: #eafaf0;
-  --color-live-border: #bfe8cf;
-  --color-danger: #dc2626;
+  --color-live: #22c55e;
+  --color-live-soft: rgba(34, 197, 94, 0.16);
+  --color-live-border: rgba(34, 197, 94, 0.35);
+  --color-danger: #ef4444;
 
   --radius-lg: 20px;
   --radius-md: 12px;
@@ -428,11 +428,11 @@ onUnmounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(3, 7, 13, 0.92);
   color: var(--color-text);
-  border-bottom: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--color-border);
   z-index: 10;
-  box-shadow: 0 4px 20px rgba(15, 27, 45, 0.04);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -509,8 +509,8 @@ onUnmounted(() => {
   justify-content: center;
   padding: 0.55rem 0.8rem;
   border-radius: 999px;
-  background: var(--color-brand-blue-soft);
-  border: 1px solid #d7e6ff;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-border);
   min-width: 118px;
 }
 
@@ -518,13 +518,13 @@ onUnmounted(() => {
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-brand-blue-hover);
+  color: var(--color-link);
 }
 
 .promedio-general-valor {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--color-brand-blue);
+  color: var(--color-text);
 }
 
 .logout-btn {
@@ -532,9 +532,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0.7rem 1rem;
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
+  background: var(--color-button);
+  color: white;
+  border: 1px solid var(--color-button);
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
@@ -543,7 +543,8 @@ onUnmounted(() => {
 }
 
 .logout-btn:hover {
-  border-color: #c4ccd8;
+  background: var(--color-button-hover);
+  border-color: var(--color-button-hover);
   box-shadow: var(--shadow-card-sm);
 }
 
@@ -566,9 +567,9 @@ onUnmounted(() => {
   max-width: 920px;
   padding: 1.75rem;
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-soft);
-  box-shadow: var(--shadow-card);
+  background: linear-gradient(135deg, rgba(18, 28, 42, 0.98) 0%, rgba(10, 16, 24, 0.98) 100%);
+  border: 1px solid rgba(63, 140, 255, 0.28);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
   animation: fadeInUp 0.6s ease both;
 }
 
@@ -597,8 +598,8 @@ onUnmounted(() => {
   margin-bottom: 1.5rem;
   padding: 1.1rem 1.25rem;
   border-radius: var(--radius-md);
-  background: var(--color-brand-blue-soft);
-  border: 1px solid #d7e6ff;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-border);
 }
 
 .widget-hoy h3 {
@@ -691,7 +692,7 @@ onUnmounted(() => {
 .materia-card {
   appearance: none;
   font: inherit;
-  background: var(--color-surface);
+  background: linear-gradient(135deg, rgba(28, 39, 58, 0.95) 0%, rgba(14, 21, 33, 0.95) 100%);
   padding: 1rem 1.1rem;
   border-radius: var(--radius-md);
   text-align: left;
@@ -701,8 +702,8 @@ onUnmounted(() => {
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-card-sm);
+  border: 1px solid rgba(63, 140, 255, 0.24);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
   cursor: pointer;
   animation: fadeInUp 0.5s ease both;
   transition:
@@ -722,7 +723,7 @@ onUnmounted(() => {
 .materia-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(15, 27, 45, 0.1);
-  border-color: #c4ccd8;
+  border-color: var(--color-border-hover);
 }
 
 .materia-card:focus-visible {

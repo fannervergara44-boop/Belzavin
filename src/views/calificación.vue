@@ -5,7 +5,6 @@
       subtitulo="Escoge tu materia para registrar tu notas"
     />
 
-    <botonvolver ruta="/home" texto="volver al inicio" class="volver-calificaciones" />
     <!-- Paso 0: elegir la materia -->
     <div v-if="!materiaSeleccionada" class="paso-materias">
       <h3>Selecciona la materia</h3>
@@ -89,7 +88,6 @@
 import { ref, computed } from "vue";
 import { useMateriasStore } from "../stores/materias";
 import Swal from "sweetalert2";
-import botonvolver from "@/components/botonvolver.vue";
 import Titulo from "@/components/titulo.vue";
 
 const materiasStore = useMateriasStore();
@@ -192,8 +190,8 @@ const registrarNota = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #f4f7fb;
-  color: #0f1b2d;
+  background: var(--color-background);
+  color: var(--color-text);
 }
 
 .calificaciones-wrapper h1 {
@@ -202,7 +200,7 @@ const registrarNota = async () => {
   margin-bottom: 1rem;
   font-size: 2rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
   text-align: center;
   animation: fadeInDown 0.7s ease;
 }
@@ -214,11 +212,11 @@ const registrarNota = async () => {
   z-index: 1;
   width: 100%;
   max-width: 600px;
-  background: #ffffff;
-  border: 1px solid #e5eaf1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 18px;
   padding: 2rem;
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
   animation: fadeInUp 0.6s ease;
 }
 
@@ -228,7 +226,7 @@ const registrarNota = async () => {
   margin-bottom: 1.5rem;
   text-align: center;
   font-weight: 700;
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .opciones-materia,
@@ -241,10 +239,10 @@ const registrarNota = async () => {
 .btn-materia,
 .btn-corte {
   padding: 1rem;
-  border: 1px solid #dde4ee;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: #f8fafc;
-  color: #0f1b2d;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -252,9 +250,9 @@ const registrarNota = async () => {
 
 .btn-materia:hover,
 .btn-corte:hover {
-  border-color: #0b5fff;
-  background: #eaf1ff;
-  box-shadow: var(--shadow-card-sm, 0 8px 20px rgba(15, 27, 45, 0.06));
+  border-color: var(--color-accent-strong);
+  background: var(--color-accent-soft);
+  box-shadow: var(--shadow-card-sm, 0 8px 20px rgba(0, 0, 0, 0.18));
 }
 
 .btn-corte {
@@ -264,7 +262,7 @@ const registrarNota = async () => {
 }
 
 .btn-corte span {
-  color: #0b5fff;
+  color: var(--color-link);
   font-weight: bold;
 }
 
@@ -273,7 +271,7 @@ const registrarNota = async () => {
   padding: 0.75rem 1rem;
   border: none;
   border-radius: 10px;
-  background: #0b5fff;
+  background: var(--color-button);
   color: white;
   cursor: pointer;
   font-weight: 700;
@@ -281,18 +279,18 @@ const registrarNota = async () => {
 }
 
 .btn-volver:hover {
-  background: #0a52dd;
+  background: var(--color-button-hover);
 }
 
 .vacio {
   text-align: center;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 
 .porcentaje-disponible {
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #5b6b7f;
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
@@ -307,9 +305,9 @@ form select {
   width: 100%;
   padding: 0.85rem 1rem;
   border-radius: 10px;
-  border: 1px solid #dde4ee;
-  background: #f8fafc;
-  color: #0f1b2d;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
+  color: var(--color-text);
   text-align: center;
   transition:
     border-color 0.2s ease,
@@ -318,27 +316,27 @@ form select {
 }
 
 form input::placeholder {
-  color: #a3adba;
+  color: var(--color-text-muted);
 }
 
 form select option {
-  background: #ffffff;
-  color: #0f1b2d;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 form input:focus,
 form select:focus {
   outline: none;
-  border-color: #0b5fff;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
+  border-color: var(--color-accent-strong);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 form button {
   padding: 0.9rem;
   border: none;
   border-radius: 10px;
-  background: #0b5fff;
+  background: var(--color-button);
   color: white;
   font-weight: 700;
   cursor: pointer;
@@ -346,7 +344,7 @@ form button {
 }
 
 form button:hover {
-  background: #0a52dd;
+  background: var(--color-button-hover);
 }
 
 form button:active {

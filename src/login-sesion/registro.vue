@@ -297,14 +297,36 @@ const registrarGoogle = async () => {
 </script>
 
 <style scoped>
-@keyframes fadeInUp {
+@keyframes softEntryUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes softEntryLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-32px) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes softEntryRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
   }
 }
 
@@ -316,7 +338,7 @@ const registrarGoogle = async () => {
   grid-template-columns: 1fr 1fr;
   align-items: center;
 
-  background: #f4f7fb;
+  background: var(--color-background);
   box-sizing: border-box;
 }
 
@@ -327,6 +349,7 @@ const registrarGoogle = async () => {
   justify-content: center;
   align-items: center;
   padding: 3rem 5vw;
+  animation: softEntryLeft 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .tarjeta-login {
@@ -338,12 +361,14 @@ const registrarGoogle = async () => {
   align-items: center;
   gap: 1rem;
 
-  background: #ffffff;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 20px;
   padding: 2.8rem 2.4rem;
 
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
-  animation: fadeInUp 0.7s ease;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.32);
+  animation: softEntryUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.2s;
 }
 
 .tarjeta-logo {
@@ -356,12 +381,12 @@ const registrarGoogle = async () => {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .tarjeta-subtitulo {
   margin: 0 0 0.5rem;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
   font-size: 0.92rem;
 }
 
@@ -375,7 +400,7 @@ const registrarGoogle = async () => {
 .campo-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #3d4a5c;
+  color: var(--color-text-muted);
 }
 
 .campo input {
@@ -384,24 +409,24 @@ const registrarGoogle = async () => {
 
   padding: 0.8rem 1rem;
   border-radius: 10px;
-  border: 1px solid #dde4ee;
-  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
 
   font-size: 0.95rem;
-  color: #0f1b2d;
+  color: var(--color-text);
 
   transition: 0.2s ease;
 }
 
 .campo input::placeholder {
-  color: #a3adba;
+  color: var(--color-text-muted);
 }
 
 .campo input:focus {
   outline: none;
-  border-color: #0b5fff;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
+  border-color: var(--color-accent-strong);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.22);
 }
 
 .campo input:disabled {
@@ -417,7 +442,7 @@ const registrarGoogle = async () => {
   border: none;
   border-radius: 10px;
 
-  background: #0b5fff;
+  background: var(--color-button);
   color: white;
   font-weight: 700;
   font-size: 0.95rem;
@@ -427,7 +452,7 @@ const registrarGoogle = async () => {
 }
 
 .btn-primario:hover {
-  background: #0a52dd;
+  background: var(--color-button-hover);
 }
 
 .btn-primario:disabled {
@@ -440,7 +465,7 @@ const registrarGoogle = async () => {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  color: #a3adba;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
 }
 
@@ -449,7 +474,7 @@ const registrarGoogle = async () => {
   content: "";
   flex: 1;
   height: 1px;
-  background: #e5eaf1;
+  background: var(--color-border);
 }
 
 .btn-google {
@@ -460,9 +485,9 @@ const registrarGoogle = async () => {
   justify-content: center;
   align-items: center;
 
-  background: #ffffff;
-  color: #3c4043;
-  border: 1px solid #dde4ee;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   font-weight: 600;
 
@@ -471,8 +496,8 @@ const registrarGoogle = async () => {
 }
 
 .btn-google:hover {
-  border-color: #c4ccd8;
-  box-shadow: 0 4px 12px rgba(15, 27, 45, 0.06);
+  border-color: var(--color-border-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
 }
 
 .btn-google:disabled {
@@ -483,12 +508,12 @@ const registrarGoogle = async () => {
 .link {
   margin-top: 0.4rem;
   font-size: 0.88rem;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
   text-decoration: none;
 }
 
 .link strong {
-  color: #0b5fff;
+  color: var(--color-link);
 }
 
 .link:hover strong {
@@ -499,7 +524,7 @@ const registrarGoogle = async () => {
 
 .panel-derecho {
   padding: 4rem 5vw;
-  animation: fadeInUp 0.6s ease;
+  animation: softEntryRight 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .marca {
@@ -515,27 +540,27 @@ const registrarGoogle = async () => {
 }
 
 .marca-nombre {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
   letter-spacing: 0.5px;
 }
 
 .titulo-principal {
-  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-size: clamp(2rem, 3.4vw, 2.8rem);
   font-weight: 800;
   line-height: 1.2;
-  color: #0f1b2d;
+  color: var(--color-text);
   margin: 0 0 1.2rem;
 }
 
 .resaltado {
-  color: #0b5fff;
+  color: var(--color-link);
 }
 
 .descripcion {
   font-size: 1rem;
-  color: #5b6b7f;
+  color: var(--color-text-muted);
   max-width: 480px;
   margin: 0 0 2.5rem;
   line-height: 1.6;
@@ -555,6 +580,15 @@ const registrarGoogle = async () => {
   display: flex;
   align-items: flex-start;
   gap: 0.9rem;
+  animation: softEntryUp 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.feature-item:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.feature-item:nth-child(3) {
+  animation-delay: 0.16s;
 }
 
 .feature-icono {
@@ -568,19 +602,19 @@ const registrarGoogle = async () => {
 
   font-size: 1.2rem;
   border-radius: 12px;
-  background: #eaf1ff;
+  background: var(--color-accent-soft);
 }
 
 .feature-titulo {
   margin: 0;
   font-weight: 700;
-  color: #0f1b2d;
+  color: var(--color-text);
   font-size: 0.98rem;
 }
 
 .feature-descripcion {
   margin: 0.15rem 0 0;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
   font-size: 0.88rem;
 }
 

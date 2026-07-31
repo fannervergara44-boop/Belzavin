@@ -22,9 +22,9 @@ defineProps({
   gap: 0.5rem;
   padding: 0.8rem 1.4rem;
   border-radius: 10px;
-  background: #ffffff;
-  border: 1px solid #dde4ee;
-  color: #0f1b2d;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
   text-decoration: none;
   font-weight: 600;
   cursor: pointer;
@@ -37,9 +37,9 @@ defineProps({
 
 .volver:hover {
   transform: translateY(-2px);
-  background: #eaf1ff;
-  border-color: #0b5fff;
-  box-shadow: 0 10px 25px rgba(15, 27, 45, 0.08);
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-strong);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .volver:active {
@@ -48,6 +48,6 @@ defineProps({
 
 .volver:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
 }
 </style>

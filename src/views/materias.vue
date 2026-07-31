@@ -1,7 +1,6 @@
 <template>
   <div class="materias-wrapper">
     <titulo titulo="Registro de materias" />
-    <botonvolver ruta="/home" texto="volver al inicio" class="volver-materias" />
     <div class="materias-content">
       <form class="form-materia" @submit.prevent="agregarMateria">
         <input type="text" v-model="nombre" placeholder="Nombre de la materia" />
@@ -69,7 +68,6 @@
 import { ref } from "vue";
 import { useMateriasStore } from "../stores/materias";
 import Swal from "sweetalert2";
-import botonvolver from "@/components/botonvolver.vue";
 import titulo from "@/components/titulo.vue";
 const materiasStore = useMateriasStore();
 
@@ -177,12 +175,12 @@ const eliminarMateria = async (materia) => {
   min-height: 100vh;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #0f1b2d;
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f4f7fb;
+  background: var(--color-background);
 }
 
 .materias-wrapper h1 {
@@ -192,7 +190,7 @@ const eliminarMateria = async (materia) => {
   text-align: center;
   font-size: 2rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -204,11 +202,11 @@ const eliminarMateria = async (materia) => {
   gap: 0.75rem;
   width: 100%;
   max-width: 480px;
-  background: #ffffff;
+  background: var(--color-surface);
   padding: 1.5rem;
   border-radius: 16px;
-  border: 1px solid #e5eaf1;
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
   animation: fadeInUp 0.6s ease both;
 }
 
@@ -217,9 +215,9 @@ const eliminarMateria = async (materia) => {
   width: 100%;
   padding: 0.8rem 1rem;
   border-radius: 10px;
-  border: 1px solid #dde4ee;
-  background: #f8fafc;
-  color: #0f1b2d;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-soft);
+  color: var(--color-text);
   text-align: center;
   appearance: none;
   transition:
@@ -231,25 +229,25 @@ const eliminarMateria = async (materia) => {
 .form-materia input:focus,
 .form-materia select:focus {
   outline: none;
-  border-color: #0b5fff;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
+  border-color: var(--color-accent-strong);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 .form-materia input::placeholder {
-  color: #a3adba;
+  color: var(--color-text-muted);
 }
 
 .form-materia select option {
-  background: #ffffff;
-  color: #0f1b2d;
+  background: var(--color-surface);
+  color: var(--color-text);
 }
 
 .horas {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #5b6b7f;
+  color: var(--color-text-muted);
 }
 
 .horas input {
@@ -258,7 +256,7 @@ const eliminarMateria = async (materia) => {
 
 .form-materia button {
   padding: 0.85rem;
-  background: #0b5fff;
+  background: var(--color-button);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -270,7 +268,7 @@ const eliminarMateria = async (materia) => {
 }
 
 .form-materia button:hover {
-  background: #0a52dd;
+  background: var(--color-button-hover);
 }
 
 .form-materia button:active {
@@ -292,16 +290,16 @@ const eliminarMateria = async (materia) => {
   width: 100%;
   padding: 1.25rem;
   border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid #e5eaf1;
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
 }
 
 .lista-materias-wrapper h2 {
   margin: 0 0 0.9rem;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .lista-materias {
@@ -318,11 +316,11 @@ const eliminarMateria = async (materia) => {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  background: #f8fafc;
+  background: var(--color-surface-soft);
   padding: 0.9rem 1rem;
   border-radius: 12px;
-  border: 1px solid #dde4ee;
-  color: #0f1b2d;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
   animation: fadeInUp 0.5s ease both;
   cursor: pointer;
   transition:
@@ -334,7 +332,7 @@ const eliminarMateria = async (materia) => {
 .lista-materias li:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 28px rgba(15, 27, 45, 0.08);
-  border-color: #c4ccd8;
+  border-color: var(--color-border-hover);
 }
 
 .materia-info {
@@ -344,7 +342,7 @@ const eliminarMateria = async (materia) => {
 }
 
 .materia-info small {
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 
 .btn-eliminar {
@@ -367,7 +365,7 @@ const eliminarMateria = async (materia) => {
 
 .lista-vacia {
   margin: 0;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
 }
 

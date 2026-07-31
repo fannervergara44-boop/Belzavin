@@ -14,12 +14,13 @@ import Sidebar from "./Sidebar.vue";
 <style scoped>
 .layout-app {
   min-height: 100vh;
-  background: #f4f7fb;
+  background: var(--color-background);
 }
 
 .layout-contenido {
   margin-left: 150px;
   transition: margin-left 0.25s ease;
+  background: var(--color-background);
 }
 
 @media (max-width: 768px) {

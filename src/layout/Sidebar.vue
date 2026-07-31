@@ -8,6 +8,7 @@
       </button>
 
       <ul v-show="open" class="menu-list">
+        <li><RouterLink :to="{ name: 'home' }" @click="cerrarMenu">Inicio</RouterLink></li>
         <li><RouterLink to="/materias" @click="cerrarMenu">Materias</RouterLink></li>
         <li><RouterLink to="/notas" @click="cerrarMenu">Notas</RouterLink></li>
         <li><RouterLink to="/horario" @click="cerrarMenu">Horario</RouterLink></li>
@@ -38,10 +39,10 @@ const cerrarMenu = () => {
 <style scoped>
 .sidebar {
   width: 130px;
-  background: #ffffff;
-  color: #0f1b2d;
+  background: var(--color-surface);
+  color: var(--color-text);
   padding: 1rem;
-  border-right: 1px solid #e5eaf1;
+  border-right: 1px solid var(--color-border);
   box-sizing: border-box;
   position: fixed;
   top: var(--top-bar-height, 7.5rem);
@@ -65,7 +66,7 @@ const cerrarMenu = () => {
   width: 100%;
   background: transparent;
   border: none;
-  color: #0f1b2d;
+  color: var(--color-text);
   font-weight: 700;
   padding: 0.5rem 0;
   text-align: left;
@@ -75,12 +76,12 @@ const cerrarMenu = () => {
 }
 
 .collapse-btn:hover {
-  color: #0b5fff;
+  color: var(--color-link);
 }
 
 .collapse-btn .arrow {
   float: right;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 
 .menu-list {
@@ -94,7 +95,7 @@ const cerrarMenu = () => {
 }
 
 .menu-list a {
-  color: #5b6b7f;
+  color: var(--color-text-muted);
   text-decoration: none;
   padding: 0.5rem 0.75rem;
   display: block;
@@ -108,16 +109,16 @@ const cerrarMenu = () => {
 }
 
 .menu-list a:hover {
-  background: #eaf1ff;
-  color: #0b5fff;
+  background: var(--color-accent-soft);
+  color: var(--color-link);
   transform: translateX(2px);
 }
 
 .menu-list a.router-link-active {
-  background: #eaf1ff;
-  color: #0b5fff;
+  background: var(--color-accent-soft);
+  color: var(--color-link);
   font-weight: 700;
-  border-left: 3px solid #0b5fff;
+  border-left: 3px solid var(--color-accent-strong);
   padding-left: calc(0.75rem - 3px);
 }
 

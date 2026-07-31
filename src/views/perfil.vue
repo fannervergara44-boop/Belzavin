@@ -3,8 +3,6 @@
     <titulo titulo="Mi perfil" />
     <h1></h1>
 
-    <botonvolver ruta="/home" texto="Volver al inicio" class="volver-perfil" />
-
     <!-- Datos del usuario -->
     <div class="perfil-card">
       <img
@@ -84,7 +82,6 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "../service/firebase";
 import { useAuthStore } from "../stores/auth";
 import { useMateriasStore } from "../stores/materias";
-import botonvolver from "@/components/botonvolver.vue";
 import titulo from "@/components/titulo.vue";
 import Titulo from "@/components/titulo.vue";
 
@@ -167,8 +164,8 @@ function promedioCorte(materiaId, corteId) {
 
   padding: 2rem 1rem 3rem;
 
-  background: #f4f7fb;
-  color: #0f1b2d;
+  background: var(--color-background);
+  color: var(--color-text);
 
   box-sizing: border-box;
 }
@@ -190,7 +187,7 @@ function promedioCorte(materiaId, corteId) {
 
   margin: 0 0 1.5rem;
 
-  color: #0f1b2d;
+  color: var(--color-text);
 
   font-size: 2rem;
   font-weight: 800;
@@ -214,13 +211,13 @@ function promedioCorte(materiaId, corteId) {
   align-items: center;
   gap: 1.5rem;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e5eaf1;
+  border: 1px solid var(--color-border);
 
   border-radius: 18px;
 
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
 
   animation: fadeUp 0.6s ease;
 }
@@ -233,7 +230,7 @@ function promedioCorte(materiaId, corteId) {
 
   object-fit: cover;
 
-  border: 2px solid #dde4ee;
+  border: 2px solid var(--color-border);
 }
 
 /* Información */
@@ -241,13 +238,13 @@ function promedioCorte(materiaId, corteId) {
 .perfil-info h2 {
   margin: 0;
 
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .email {
   margin: 0.4rem 0 1rem;
 
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 
 /* Inputs */
@@ -268,11 +265,11 @@ function promedioCorte(materiaId, corteId) {
 
   border-radius: 10px;
 
-  border: 1px solid #dde4ee;
+  border: 1px solid var(--color-border);
 
-  background: #f8fafc;
+  background: var(--color-surface-soft);
 
-  color: #0f1b2d;
+  color: var(--color-text);
 
   transition: 0.2s ease;
 }
@@ -280,11 +277,11 @@ function promedioCorte(materiaId, corteId) {
 .form-editar input:focus {
   outline: none;
 
-  border-color: #0b5fff;
+  border-color: var(--color-accent-strong);
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  box-shadow: 0 0 0 3px rgba(11, 95, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 /* Botones */
@@ -307,28 +304,28 @@ function promedioCorte(materiaId, corteId) {
 
 .btn-editar,
 .btn-guardar {
-  background: #0b5fff;
+  background: var(--color-button);
 
   color: white;
 }
 
 .btn-editar:hover,
 .btn-guardar:hover {
-  background: #0a52dd;
+  background: var(--color-button-hover);
 }
 
 .btn-cancelar {
-  background: #ffffff;
+  background: var(--color-surface);
 
-  color: #5b6b7f;
+  color: var(--color-text-muted);
 
-  border: 1px solid #dde4ee;
+  border: 1px solid var(--color-border);
 }
 
 .btn-cancelar:hover {
-  border-color: #c4ccd8;
+  border-color: var(--color-border-hover);
 
-  background: #f8fafc;
+  background: var(--color-surface-soft);
 }
 
 /* Historial */
@@ -349,7 +346,7 @@ function promedioCorte(materiaId, corteId) {
   margin-top: 2rem;
   font-weight: 700;
 
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .lista-historial {
@@ -363,9 +360,9 @@ function promedioCorte(materiaId, corteId) {
 .materia-historial {
   overflow: hidden;
 
-  background: #ffffff;
+  background: var(--color-surface);
 
-  border: 1px solid #e5eaf1;
+  border: 1px solid var(--color-border);
 
   border-radius: 12px;
 
@@ -387,11 +384,11 @@ function promedioCorte(materiaId, corteId) {
 }
 
 .materia-resumen strong {
-  color: #0f1b2d;
+  color: var(--color-text);
 }
 
 .docente {
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 
   font-size: 0.9rem;
 }
@@ -401,7 +398,7 @@ function promedioCorte(materiaId, corteId) {
 
   border-radius: 999px;
 
-  background: #0b5fff;
+  background: var(--color-button);
 
   color: white;
 
@@ -409,17 +406,17 @@ function promedioCorte(materiaId, corteId) {
 }
 
 .flecha {
-  color: #a3adba;
+  color: var(--color-text-muted);
 }
 
 .materia-detalle {
   padding: 1rem 1.2rem;
 
-  border-top: 1px solid #e5eaf1;
+  border-top: 1px solid var(--color-border);
 }
 
 .corte-titulo {
-  color: #0b5fff;
+  color: var(--color-link);
   font-weight: 600;
 }
 
@@ -428,12 +425,12 @@ function promedioCorte(materiaId, corteId) {
 
   padding: 0.25rem 0;
 
-  color: #5b6b7f;
+  color: var(--color-text-muted);
 }
 
 .sin-notas,
 .vacio {
-  color: #a3adba;
+  color: var(--color-text-muted);
 }
 
 .volver-perfil {

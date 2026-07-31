@@ -56,7 +56,7 @@ defineProps({
   font-size: 1em;
   font-weight: 700;
   letter-spacing: 3px;
-  color: #3f51b5;
+  color: var(--color-link);
   text-transform: uppercase;
   position: relative;
   display: inline-block;
@@ -70,7 +70,7 @@ defineProps({
   width: 70%;
   height: 4px;
   border-radius: 10px;
-  background: linear-gradient(90deg, #3f51b5, #5c6bc0);
+  background: linear-gradient(90deg, var(--color-link), var(--color-accent-strong));
 }
 
 .titulo-belzavi p {
@@ -78,7 +78,7 @@ defineProps({
   font-family: "Poppins", sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 @media (max-width: 768px) {

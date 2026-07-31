@@ -28,18 +28,14 @@ h1 {
   margin: 0;
   font-size: 2.2rem;
   font-weight: 800;
-
-  color: #0f1b2d;
-
+  color: var(--color-text);
   letter-spacing: 0.5px;
 }
 
 p {
   margin-top: 10px;
-
   font-size: 1rem;
   font-weight: 400;
-
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 </style>

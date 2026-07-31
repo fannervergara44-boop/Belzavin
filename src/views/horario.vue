@@ -1,7 +1,6 @@
 <template>
   <div class="horario-wrapper">
     <titulo titulo="Mi horario" />
-    <botonvolver ruta="/home" texto="volver al incio" class="volver-horario" />
 
     <div v-if="materiasStore.materias.length === 0" class="vacio">
       No tienes materias con horario todavía.
@@ -56,7 +55,6 @@
 <script setup>
 import { computed } from "vue";
 import { useMateriasStore } from "../stores/materias";
-import botonvolver from "@/components/botonvolver.vue";
 import titulo from "@/components/titulo.vue";
 import Titulo from "@/components/titulo.vue";
 
@@ -141,8 +139,8 @@ function estiloEvento(materia) {
   max-width: 100%;
   margin: 0;
   padding: 2rem 1rem 3rem;
-  color: #0f1b2d;
-  background: #f4f7fb;
+  color: var(--color-text);
+  background: var(--color-background);
   box-sizing: border-box;
 }
 
@@ -153,7 +151,7 @@ function estiloEvento(materia) {
   margin: 0 auto 1.5rem;
   font-size: 2rem;
   font-weight: 800;
-  color: #0f1b2d;
+  color: var(--color-text);
   animation: fadeInDown 0.7s ease both;
 }
 
@@ -163,7 +161,7 @@ function estiloEvento(materia) {
   max-width: 900px;
   margin: 2rem auto 0;
   text-align: center;
-  color: #7a8aa0;
+  color: var(--color-text-muted);
 }
 
 .grilla {
@@ -172,34 +170,34 @@ function estiloEvento(materia) {
   display: grid;
   max-width: 900px;
   margin: 0 auto;
-  background: #ffffff;
-  border: 1px solid #e5eaf1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(15, 27, 45, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
   animation: fadeInUp 0.6s ease both;
 }
 
 .celda {
-  border: 1px solid #eef2f7;
+  border: 1px solid var(--color-border);
   padding: 0.3rem 0.5rem;
   font-size: 0.85rem;
 }
 
 .encabezado {
-  background: #eaf1ff;
-  color: #0f1b2d;
+  background: var(--color-accent-soft);
+  color: var(--color-text);
   font-weight: 700;
   text-align: center;
 }
 
 .hora-label {
-  color: #a3adba;
+  color: var(--color-text-muted);
   text-align: right;
 }
 
 .evento {
-  background: #0b5fff;
+  background: var(--color-button);
   color: white;
   border-radius: 8px;
   padding: 0.35rem 0.5rem;
@@ -216,7 +214,7 @@ function estiloEvento(materia) {
 
 .evento:hover {
   transform: translateY(-1px) scale(1.02);
-  background: #0a52dd;
+  background: var(--color-button-hover);
   box-shadow: 0 8px 20px rgba(11, 95, 255, 0.3);
 }
 
