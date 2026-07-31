@@ -299,11 +299,11 @@ onUnmounted(() => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(20px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -372,7 +372,8 @@ onUnmounted(() => {
 .bienvenida-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 27, 45, 0.45);
+  background: linear-gradient(135deg, rgba(3, 7, 13, 0.72), rgba(15, 27, 45, 0.58));
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,46 +382,74 @@ onUnmounted(() => {
 }
 
 .bienvenida-modal {
-  max-width: 420px;
+  position: relative;
+  max-width: 460px;
   width: 100%;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(238, 245, 255, 0.96));
+  border: 1px solid rgba(63, 140, 255, 0.28);
+  border-radius: 24px;
+  padding: 2.25rem 2rem 2rem;
   text-align: center;
-  color: var(--color-text);
-  box-shadow: var(--shadow-card);
-  animation: fadeInUp 0.4s ease both;
+  color: #0f172a;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+  animation: fadeInUp 0.45s ease both;
+  overflow: hidden;
+}
+
+.bienvenida-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(11, 95, 255, 0.1), transparent 55%);
+  pointer-events: none;
 }
 
 .bienvenida-modal h2 {
-  margin: 0 0 1rem;
-  color: var(--color-text);
-  font-size: 1.4rem;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.9rem;
+  color: #0f172a;
+  font-size: 1.55rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .bienvenida-modal p {
-  color: var(--color-text-muted);
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0 0 1.6rem;
+  font-size: 1rem;
 }
 
 .bienvenida-modal button {
-  padding: 0.75rem 1.5rem;
-  background: var(--color-brand-blue);
+  position: relative;
+  z-index: 1;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, var(--color-brand-blue), #2563eb);
   color: white;
   border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
+  border-radius: 999px;
+  font-weight: 800;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: 0.2s ease;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
 }
 
 .bienvenida-modal button:hover {
-  background: var(--color-brand-blue-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.3);
+  filter: brightness(1.04);
+}
+
+.bienvenida-modal button:active {
+  transform: scale(0.98);
 }
 
 .top-bar {
