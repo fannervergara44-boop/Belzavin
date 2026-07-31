@@ -111,6 +111,14 @@ const agregarMateria = async () => {
     },
   });
 
+  Swal.fire({
+    icon: "success",
+    title: "Materia agregada",
+    text: `${nombre.value} se agregó correctamente.`,
+    confirmButtonText: "Aceptar",
+    showCloseButton: true,
+  });
+
   nombre.value = "";
   docente.value = "";
   meta.value = null;
@@ -133,6 +141,13 @@ const eliminarMateria = async (materia) => {
 
   try {
     await materiasStore.eliminarMateria(materia.id);
+    Swal.fire({
+      icon: "success",
+      title: "Materia eliminada",
+      text: `${materia.nombre} fue eliminada.`,
+      confirmButtonText: "Aceptar",
+      showCloseButton: true,
+    });
   } catch (error) {
     console.error("No se pudo eliminar la materia:", error);
     Swal.fire({
