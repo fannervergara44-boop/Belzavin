@@ -16,8 +16,18 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: "/", redirect: { name: "home" } },
-    { path: "/registro", name: "registro", component: Registro },
-    { path: "/inicio_sesion", name: "inicio_sesion", component: InicioSesion },
+    {
+      path: "/registro",
+      name: "registro",
+      component: Registro,
+      meta: { transition: "auth-slide-left" },
+    },
+    {
+      path: "/inicio_sesion",
+      name: "inicio_sesion",
+      component: InicioSesion,
+      meta: { transition: "auth-slide-right" },
+    },
 
     {
       path: "/",

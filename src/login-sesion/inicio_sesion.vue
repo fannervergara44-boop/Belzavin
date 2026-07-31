@@ -11,8 +11,8 @@
       </h1>
 
       <p class="descripcion">
-        Organiza tus materias, consulta tus notas, calcula tus promedios y mantén el control de tu
-        semestre.
+        Pensado para estudiantes que quieren tener el control de su semestre, sin perder tiempo
+        buscando notas, fechas o información importante en mil lugares distintos.
       </p>
 
       <ul class="lista-features">
@@ -249,11 +249,11 @@ const iniciarGoogle = async () => {
 @keyframes softEntryRight {
   from {
     opacity: 0;
-    transform: translateX(32px) translateY(8px);
+    transform: translateX(40px) translateY(10px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateX(0) translateY(0);
+    transform: translateX(0) translateY(0) scale(1);
   }
 }
 
@@ -394,6 +394,7 @@ const iniciarGoogle = async () => {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.32);
   animation: softEntryUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: 0.2s;
+  will-change: transform, opacity;
 }
 
 .tarjeta-logo {
