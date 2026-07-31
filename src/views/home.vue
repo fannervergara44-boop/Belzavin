@@ -15,8 +15,8 @@
           ¡Bienvenido a Belzavin, {{ authStore.usuario?.displayName }}!
         </h2>
         <p>
-          Acá vas a poder llevar tus materias, notas, horario y promedios en un solo lugar. Empezá
-          creando tu primera materia.
+          Acá vas a poder llevar tus materias, notas, horario y promedios en un solo lugar. Empieza
+          creando tu primera materia..
         </p>
         <button @click="irAMateriasDesdeBienvenida">Empezar</button>
       </div>
