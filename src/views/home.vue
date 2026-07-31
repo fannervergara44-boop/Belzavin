@@ -457,16 +457,16 @@ onUnmounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  background: rgba(3, 7, 13, 0.92);
+  background: linear-gradient(135deg, rgba(10, 17, 28, 0.96), rgba(17, 28, 44, 0.96));
   color: var(--color-text);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(99, 140, 255, 0.25);
   z-index: 10;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 1.5rem;
+  padding: 0.7rem 1.5rem;
 }
 
 .logo-top-bar {
@@ -484,7 +484,11 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.4rem 0;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .user-bar-empty {
@@ -503,7 +507,8 @@ onUnmounted(() => {
   height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid var(--color-border);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
 }
 
 .user-meta {
@@ -536,24 +541,25 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.55rem 0.8rem;
+  padding: 0.6rem 0.9rem;
   border-radius: 999px;
-  background: var(--color-accent-soft);
-  border: 1px solid var(--color-border);
-  min-width: 118px;
+  background: linear-gradient(135deg, rgba(11, 95, 255, 0.24), rgba(37, 99, 235, 0.2));
+  border: 1px solid rgba(99, 140, 255, 0.3);
+  min-width: 124px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .promedio-general-label {
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-link);
+  color: #dbeafe;
 }
 
 .promedio-general-valor {
   font-size: 1rem;
   font-weight: 800;
-  color: var(--color-text);
+  color: white;
 }
 
 .logout-btn {
@@ -561,10 +567,10 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0.7rem 1rem;
-  background: var(--color-button);
+  background: rgba(255, 255, 255, 0.08);
   color: white;
-  border: 1px solid var(--color-button);
-  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
@@ -572,9 +578,9 @@ onUnmounted(() => {
 }
 
 .logout-btn:hover {
-  background: var(--color-button-hover);
-  border-color: var(--color-button-hover);
-  box-shadow: var(--shadow-card-sm);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .logout-btn:active {
