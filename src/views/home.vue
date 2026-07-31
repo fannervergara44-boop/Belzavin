@@ -16,7 +16,7 @@
         </h2>
         <p>
           Acá vas a poder llevar tus materias, notas, horario y promedios en un solo lugar. Empezá
-          creando tu primera materia desde el menú.
+          creando tu primera.
         </p>
         <button @click="irAMateriasDesdeBienvenida">Empezar</button>
       </div>
