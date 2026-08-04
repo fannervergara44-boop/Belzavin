@@ -27,7 +27,7 @@
     <main class="dashboard-main">
       <header class="dashboard-topbar">
         <div class="saludo">
-          <h1>Hola, {{ primerNombre }} 👋</h1>
+          <h1>Hola, {{ primerNombre }}</h1>
           <p class="saludo-motivacional">{{ mensajeMotivacional }}</p>
         </div>
 
@@ -323,7 +323,7 @@
       </section>
 
       <div v-if="mostrarConsejo" class="consejo-banner">
-        <span class="consejo-icono" aria-hidden="true">🚀</span>
+        <span class="consejo-icono" aria-hidden="true"></span>
         <p><strong>Consejo del día:</strong> {{ consejoActual }}</p>
         <button
           type="button"
