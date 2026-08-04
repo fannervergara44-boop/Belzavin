@@ -99,6 +99,11 @@ const features = [
     titulo: "Planifica tu semestre",
     descripcion: "Agenda tareas, exámenes y actividades.",
   },
+  {
+    icono: "📈",
+    titulo: "Visualiza tu evolución",
+    descripcion: "Mira cómo cambia tu promedio con el tiempo, por materia y en general.",
+  },
 ];
 
 const iniciarSesion = async () => {
