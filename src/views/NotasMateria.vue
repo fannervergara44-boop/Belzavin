@@ -1,24 +1,37 @@
 <template>
-  <div class="notas-wrapper">
-    <h1>{{ materia?.nombre }}</h1>
-    <p class="promedio-general">Promedio de la materia: {{ promedioMateria.toFixed(1) }}</p>
+  <div class="notas-dashboard">
+    <Sidebar />
 
-    <div class="cortes-lista">
-      <div v-for="corteId in ['corte1', 'corte2', 'corte3']" :key="corteId" class="corte-row">
-        <div class="corte-info">
-          <strong>Corte {{ corteId.slice(-1) }} ({{ pesos[corteId] }}%)</strong>
-          <span class="promedio-corte">Promedio: {{ promedioCorte(corteId).toFixed(1) }}</span>
+    <main class="notas-main">
+      <RouterLink :to="{ name: 'home' }" class="btn-volver">← Volver a inicio</RouterLink>
+
+      <header class="notas-header">
+        <h1>{{ materia?.nombre }}</h1>
+        <p class="notas-subtitulo">
+          Promedio de la materia: {{ promedioMateria.toFixed(1) }}
+          <span class="separador">·</span>
+          Créditos: {{ materia?.creditos ?? "—" }}
+        </p>
+      </header>
+
+      <div class="cortes-lista">
+        <div v-for="corteId in ['corte1', 'corte2', 'corte3']" :key="corteId" class="corte-card">
+          <div class="corte-info">
+            <strong>Corte {{ corteId.slice(-1) }} ({{ pesos[corteId] }}%)</strong>
+            <span class="promedio-corte">Promedio: {{ promedioCorte(corteId).toFixed(1) }}</span>
+          </div>
+
+          <ul class="lista-notas" v-if="notasDeCorte(corteId).length">
+            <li v-for="nota in notasDeCorte(corteId)" :key="nota.id">
+              <span class="nota-nombre">{{ nota.nombre }}</span>
+              <span class="nota-tipo">({{ nota.tipo || "Nota" }})</span>
+              <span class="nota-datos">{{ nota.valor }} · {{ nota.porcentaje }}%</span>
+            </li>
+          </ul>
+          <p v-else class="sin-notas">Sin notas registradas todavía.</p>
         </div>
-
-        <ul class="lista-notas" v-if="notasDeCorte(corteId).length">
-          <li v-for="nota in notasDeCorte(corteId)" :key="nota.id">
-            {{ nota.nombre }} ({{ nota.tipo || "Nota" }}) — {{ nota.valor }} ·
-            {{ nota.porcentaje }}%
-          </li>
-        </ul>
-        <p v-else class="sin-notas">Sin notas registradas todavía.</p>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -26,6 +39,7 @@
 import { computed } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { useMateriasStore } from "../stores/materias";
+import Sidebar from "@/layout/Sidebar.vue";
 
 const route = useRoute();
 const materiasStore = useMateriasStore();
@@ -57,7 +71,7 @@ const promedioMateria = computed(() => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -65,108 +79,103 @@ const promedioMateria = computed(() => {
   }
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.notas-wrapper {
-  position: relative;
+.notas-dashboard {
   min-height: 100vh;
-  max-width: 100%;
-  margin: 0;
-  padding: 2rem 1rem 3rem;
-  color: var(--color-text);
   background: var(--color-background);
-  box-sizing: border-box;
+  color: var(--color-text-body, var(--color-text));
 }
 
-.volver {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  max-width: 700px;
-  margin: 0 auto 1rem;
-  color: var(--color-link);
+.notas-main {
+  margin-left: var(--sidebar-width, 236px);
+  padding: 2rem clamp(1.5rem, 3vw, 3rem) 3rem;
+  max-width: 760px;
+}
+
+/* ---------- Volver ---------- */
+.btn-volver {
+  display: inline-flex;
+  margin-bottom: 1.1rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 0.85rem;
   text-decoration: none;
-  font-weight: 600;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease;
 }
 
-.volver:hover {
-  opacity: 0.75;
+.btn-volver:hover {
+  color: var(--color-accent-strong);
 }
 
-.notas-wrapper h1 {
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-  margin: 0 auto;
-  font-size: 2rem;
+/* ---------- Header ---------- */
+.notas-header {
+  margin-bottom: 1.75rem;
+}
+
+.notas-header h1 {
+  margin: 0;
+  font-size: 1.7rem;
   font-weight: 800;
-  color: var(--color-text);
-  animation: fadeInDown 0.7s ease both;
+  color: var(--color-heading);
+  letter-spacing: -0.01em;
+  text-transform: capitalize;
 }
 
-.promedio-general {
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-  margin: 0 auto 1.5rem;
+.notas-subtitulo {
+  margin: 0.35rem 0 0;
   color: var(--color-text-muted);
 }
 
+.separador {
+  margin: 0 0.4rem;
+  color: var(--color-border-hover);
+}
+
+/* ---------- Cortes ---------- */
 .cortes-lista {
-  position: relative;
-  z-index: 1;
-  max-width: 700px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.9rem;
 }
 
-.corte-row {
+.corte-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   padding: 1.1rem 1.3rem;
-  animation: fadeInUp 0.5s ease both;
+  animation: fadeInUp 0.32s ease;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
 }
 
-.corte-row:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(15, 27, 45, 0.1);
+.corte-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+  border-color: var(--color-border-hover);
 }
 
 .corte-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.75rem;
 }
 
 .corte-info strong {
-  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-heading);
 }
 
 .promedio-corte {
-  background: var(--color-button);
-  color: white;
-  padding: 0.25rem 0.7rem;
+  padding: 0.3rem 0.75rem;
   border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.78rem;
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--color-info, var(--color-accent-strong));
 }
 
 .lista-notas {
@@ -178,12 +187,33 @@ const promedioMateria = computed(() => {
 }
 
 .lista-notas li {
-  padding: 0.35rem 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--color-border);
 }
 
 .lista-notas li:last-child {
   border-bottom: none;
+}
+
+.nota-nombre {
+  color: var(--color-heading);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.nota-tipo {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.nota-datos {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
 }
 
 .sin-notas {
@@ -192,10 +222,31 @@ const promedioMateria = computed(() => {
   margin: 0;
 }
 
-.volver-resumen {
-  position: fixed;
-  top: 20px;
-  left: 50px;
-  z-index: 1000;
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .notas-main {
+    margin-left: 0;
+    max-width: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .notas-main {
+    padding: 1.25rem;
+  }
+
+  .corte-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .lista-notas li {
+    flex-wrap: wrap;
+  }
+
+  .nota-datos {
+    margin-left: 0;
+  }
 }
 </style>

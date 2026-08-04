@@ -1,62 +1,72 @@
 <template>
-  <div class="horario-wrapper">
-    <titulo titulo="Mi horario" />
+  <div class="horario-dashboard">
+    <Sidebar />
 
-    <div v-if="materiasStore.materias.length === 0" class="vacio">
-      No tienes materias con horario todavía.
-    </div>
+    <main class="horario-main">
+      <header class="horario-header">
+        <h1>Mi horario</h1>
+        <p class="horario-subtitulo">Así se ve tu semana de clases, de un vistazo.</p>
+      </header>
 
-    <div v-else class="grilla" :style="gridStyle">
-      <div class="celda encabezado" :style="{ gridColumn: 1, gridRow: 1 }"></div>
-
-      <div
-        v-for="(dia, i) in dias"
-        :key="dia"
-        class="celda encabezado"
-        :style="{ gridColumn: i + 2, gridRow: 1 }"
-      >
-        {{ dia }}
+      <div v-if="materiasStore.materias.length === 0" class="horario-vacio">
+        <p>No tienes materias con horario todavía.</p>
       </div>
 
-      <template v-for="(hora, horaIndex) in horas" :key="hora">
-        <div
-          class="celda hora-label"
-          :style="{
-            gridColumn: 1,
-            gridRow: `${filaDeHora(horaIndex)} / span ${bloquesPorHora}`,
-          }"
-        >
-          {{ hora }}:00
+      <div v-else class="grilla-wrapper">
+        <div class="grilla" :style="gridStyle">
+          <div class="celda encabezado" :style="{ gridColumn: 1, gridRow: 1 }"></div>
+
+          <div
+            v-for="(dia, i) in dias"
+            :key="dia"
+            class="celda encabezado"
+            :class="{ 'columna-hoy': dia === diaHoy }"
+            :style="{ gridColumn: i + 2, gridRow: 1 }"
+          >
+            {{ dia }}
+          </div>
+
+          <template v-for="(hora, horaIndex) in horas" :key="hora">
+            <div
+              class="celda hora-label"
+              :style="{
+                gridColumn: 1,
+                gridRow: `${filaDeHora(horaIndex)} / span ${bloquesPorHora}`,
+              }"
+            >
+              {{ hora }}:00
+            </div>
+
+            <div
+              v-for="(dia, i) in dias"
+              :key="dia + hora"
+              class="celda"
+              :class="{ 'columna-hoy': dia === diaHoy }"
+              :style="{
+                gridColumn: i + 2,
+                gridRow: `${filaDeHora(horaIndex)} / span ${bloquesPorHora}`,
+              }"
+            ></div>
+          </template>
+
+          <div
+            v-for="materia in materiasConHorario"
+            :key="materia.id"
+            class="evento"
+            :style="estiloEvento(materia)"
+          >
+            {{ materia.nombre }}
+          </div>
         </div>
-
-        <div
-          v-for="(dia, i) in dias"
-          :key="dia + hora"
-          class="celda"
-          :style="{
-            gridColumn: i + 2,
-            gridRow: `${filaDeHora(horaIndex)} / span ${bloquesPorHora}`,
-          }"
-        ></div>
-      </template>
-
-      <div
-        v-for="materia in materiasConHorario"
-        :key="materia.id"
-        class="evento"
-        :style="estiloEvento(materia)"
-      >
-        {{ materia.nombre }}
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { useMateriasStore } from "../stores/materias";
-import titulo from "@/components/titulo.vue";
-import Titulo from "@/components/titulo.vue";
+import Sidebar from "@/layout/Sidebar.vue";
 
 const materiasStore = useMateriasStore();
 
@@ -70,6 +80,10 @@ const horas = Array.from(
   { length: horaFinGrilla - horaInicioGrilla },
   (_, i) => horaInicioGrilla + i,
 );
+
+// Día actual, para resaltar su columna en la grilla
+const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const diaHoy = computed(() => diasSemana[new Date().getDay()]);
 
 // Solo materias que sí tienen horario completo
 const materiasConHorario = computed(() =>
@@ -114,7 +128,7 @@ function estiloEvento(materia) {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -122,60 +136,68 @@ function estiloEvento(materia) {
   }
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.horario-wrapper {
-  position: relative;
+.horario-dashboard {
   min-height: 100vh;
-  max-width: 100%;
-  margin: 0;
-  padding: 2rem 1rem 3rem;
-  color: var(--color-text);
   background: var(--color-background);
-  box-sizing: border-box;
+  color: var(--color-text-body, var(--color-text));
 }
 
-.horario-wrapper h1 {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 0 auto 1.5rem;
-  font-size: 2rem;
+.horario-main {
+  margin-left: var(--sidebar-width, 236px);
+  padding: 2rem clamp(1.5rem, 3vw, 3rem) 3rem;
+}
+
+/* ---------- Header ---------- */
+.horario-header {
+  margin-bottom: 1.75rem;
+}
+
+.horario-header h1 {
+  margin: 0;
+  font-size: 1.7rem;
   font-weight: 800;
-  color: var(--color-text);
-  animation: fadeInDown 0.7s ease both;
+  color: var(--color-heading);
+  letter-spacing: -0.01em;
 }
 
-.vacio {
-  position: relative;
-  z-index: 1;
-  max-width: 900px;
-  margin: 2rem auto 0;
-  text-align: center;
+.horario-subtitulo {
+  margin: 0.35rem 0 0;
   color: var(--color-text-muted);
 }
 
-.grilla {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  max-width: 900px;
-  margin: 0 auto;
+/* ---------- Estado vacío ---------- */
+.horario-vacio {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 18px;
+  padding: 1.6rem 1.75rem;
+  color: var(--color-text-muted);
+  display: grid;
+  place-items: center;
+  min-height: 98px;
+}
+
+.horario-vacio p {
+  margin: 0;
+}
+
+/* ---------- Grilla ---------- */
+.grilla-wrapper {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  padding: 1.25rem;
+  overflow-x: auto;
+  animation: fadeInUp 0.32s ease;
+}
+
+.grilla {
+  display: grid;
+  min-width: 720px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
-  animation: fadeInUp 0.6s ease both;
+  border: 1px solid var(--color-border);
 }
 
 .celda {
@@ -185,15 +207,31 @@ function estiloEvento(materia) {
 }
 
 .encabezado {
-  background: var(--color-accent-soft);
-  color: var(--color-text);
+  background: var(--color-surface-soft);
+  color: var(--color-heading);
   font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.encabezado.columna-hoy {
+  background: rgba(56, 189, 248, 0.16);
+  color: var(--color-info, var(--color-accent-strong));
 }
 
 .hora-label {
   color: var(--color-text-muted);
   text-align: right;
+  font-size: 0.78rem;
+}
+
+.celda.columna-hoy {
+  background: rgba(56, 189, 248, 0.06);
 }
 
 .evento {
@@ -206,7 +244,7 @@ function estiloEvento(materia) {
   margin: 2px;
   overflow: hidden;
   z-index: 1;
-  box-shadow: 0 6px 16px rgba(11, 95, 255, 0.2);
+  box-shadow: 0 6px 16px rgba(11, 95, 255, 0.25);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease;
@@ -215,13 +253,23 @@ function estiloEvento(materia) {
 .evento:hover {
   transform: translateY(-1px) scale(1.02);
   background: var(--color-button-hover);
-  box-shadow: 0 8px 20px rgba(11, 95, 255, 0.3);
+  box-shadow: 0 8px 20px rgba(11, 95, 255, 0.35);
 }
 
-.volver-horario {
-  position: fixed;
-  top: 20px;
-  left: 50px;
-  z-index: 1000;
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .horario-main {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .horario-main {
+    padding: 1.25rem;
+  }
+
+  .grilla-wrapper {
+    padding: 0.85rem;
+  }
 }
 </style>

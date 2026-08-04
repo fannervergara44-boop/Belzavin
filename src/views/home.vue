@@ -1,5 +1,7 @@
 <template>
-  <div class="home">
+  <div class="dashboard">
+    <Sidebar />
+
     <div
       v-if="mostrarBienvenida"
       class="bienvenida-overlay"
@@ -16,119 +18,264 @@
         </h2>
         <p>
           Acá vas a poder llevar tus materias, notas, horario y promedios en un solo lugar. Empieza
-          creando tu primera materia..
+          creando tu primera materia.
         </p>
-        <button @click="irAMateriasDesdeBienvenida">Empezar</button>
+        <button type="button" @click="irAMateriasDesdeBienvenida">Empezar</button>
       </div>
     </div>
 
-    <header class="top-bar">
-      <img :src="logo" alt="Logo Belzavin" class="logo-top-bar" />
-
-      <div v-if="authStore.cargando" class="user-bar user-bar-empty">
-        <p>Cargando...</p>
-      </div>
-
-      <div v-else-if="authStore.usuario" class="user-bar">
-        <div class="user-info">
-          <img
-            v-if="authStore.usuario.photoURL"
-            :src="authStore.usuario.photoURL"
-            alt="Foto de perfil"
-            class="profile-pic"
-          />
-
-          <div class="user-meta">
-            <h2>Hola {{ authStore.usuario.displayName || "Usuario" }}</h2>
-            <p class="email">{{ authStore.usuario.email }}</p>
-          </div>
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <div class="saludo">
+          <h1>Hola, {{ primerNombre }} 👋</h1>
+          <p class="saludo-motivacional">{{ mensajeMotivacional }}</p>
         </div>
 
-        <div class="user-actions">
-          <div class="promedio-general-card">
-            <span class="promedio-general-label">Promedio general</span>
-            <span class="promedio-general-valor">{{
-              materiasStore.promedioGeneral.toFixed(1)
+        <div class="topbar-acciones">
+          <div v-if="authStore.usuario" class="usuario-chip">
+            <img
+              v-if="authStore.usuario.photoURL"
+              :src="authStore.usuario.photoURL"
+              alt="Foto de perfil"
+              class="usuario-chip-avatar"
+            />
+            <div v-else class="usuario-chip-avatar usuario-chip-avatar--inicial">
+              {{ inicialUsuario }}
+            </div>
+
+            <div class="usuario-chip-meta">
+              <span class="usuario-chip-nombre">{{ primerNombre }}</span>
+              <span class="usuario-chip-email">{{ authStore.usuario.email }}</span>
+            </div>
+
+            <button
+              type="button"
+              class="usuario-chip-logout"
+              title="Cerrar sesión"
+              aria-label="Cerrar sesión"
+              @click="cerrarSesion"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <path d="M16 17l5-5-5-5" />
+                <path d="M21 12H9" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div v-if="claseActual" class="clase-en-vivo">
+        <span class="clase-en-vivo-punto"></span>
+        <p>
+          Ahora mismo tienes clase de
+          <strong>{{ claseActual.nombre }}</strong>
+          (hasta las {{ claseActual.horario.horaFin }})
+        </p>
+      </div>
+
+      <section class="kpi-row">
+        <div
+          class="kpi-card kpi-card--promedio"
+          :class="{ 'kpi-card--promedio-centrado': !pathAreaGeneral }"
+        >
+          <span class="kpi-label">Promedio general</span>
+          <div class="kpi-promedio-valor-fila">
+            <span class="kpi-promedio-valor">{{
+              materiasStore.promedioGeneral !== null
+                ? materiasStore.promedioGeneral.toFixed(1)
+                : "—"
+            }}</span>
+            <span class="kpi-badge" :class="`kpi-badge--${badgePromedioGeneral.color}`">{{
+              badgePromedioGeneral.texto
             }}</span>
           </div>
 
-          <button class="logout-btn" @click="cerrarSesion">Cerrar sesión</button>
-        </div>
-      </div>
-
-      <div v-else class="user-bar user-bar-empty">
-        <p>No hay usuario conectado</p>
-      </div>
-    </header>
-
-    <main class="home-content">
-      <section class="dashboard-panel">
-        <div class="dashboard-header">
-          <Titulo
-            titulo="Bienvenido a Belzavin"
-            subtitulo="Tu resumen académico en un solo lugar"
-          />
-        </div>
-
-        <div class="widget-hoy">
-          <h3>Hoy es {{ diaHoy }}</h3>
-
-          <div v-if="claseActual" class="clase-en-curso">
-            <span class="pulso" aria-hidden="true"></span>
-            <p>
-              Ahora mismo tienes clase de <strong>{{ claseActual.nombre }}</strong> (hasta las
-              {{ claseActual.horario.horaFin }})
-            </p>
-          </div>
-
-          <div v-else-if="claseRecienTerminada" class="clase-terminada">
-            <p>
-              Terminó tu clase de <strong>{{ claseRecienTerminada.nombre }}</strong> 👋
-            </p>
-          </div>
-
-          <div v-if="proximasClasesHoy.length > 0" class="proximas-hoy">
-            <p class="proximas-titulo">
-              {{ claseActual ? "Después tienes:" : "Más tarde hoy:" }}
-            </p>
-            <div v-for="materia in proximasClasesHoy" :key="materia.id" class="clase-proxima">
-              <strong>{{ materia.nombre }}</strong> a las {{ materia.horario.horaInicio }}
-            </div>
-          </div>
-
-          <div
-            v-else-if="!claseActual && !claseRecienTerminada && clasesDeHoy.length === 0"
-            class="hoy-vacio"
+          <svg
+            v-if="pathAreaGeneral"
+            class="kpi-sparkline-grande"
+            viewBox="0 0 480 110"
+            preserveAspectRatio="none"
           >
-            No tienes clases programadas hoy
-          </div>
-
-          <div
-            v-else-if="!claseActual && !claseRecienTerminada && clasesDeHoy.length > 0"
-            class="hoy-vacio"
-          >
-            Ya terminaron todas tus clases de hoy
-          </div>
+            <defs>
+              <linearGradient id="gradientePromedioGeneral" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--color-accent-strong)" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="var(--color-accent-strong)" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path :d="pathAreaGeneral" fill="url(#gradientePromedioGeneral)" stroke="none" />
+            <path
+              :d="pathLineaGeneral"
+              fill="none"
+              stroke="var(--color-accent-strong)"
+              stroke-width="2"
+            />
+          </svg>
+          <p v-else-if="materiasStore.promedioGeneral === null" class="kpi-sparkline-vacio">
+            Aún no hay histórico suficiente. Se irá completando con cada nota que registres.
+          </p>
         </div>
 
-        <div class="resumen-materias">
+        <div class="kpi-card">
+          <span class="kpi-icono" :class="`kpi-icono--${colorProximaClase}`">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 10h18" />
+              <path d="M8 2v6" />
+              <path d="M16 2v6" />
+            </svg>
+          </span>
+          <span class="kpi-label">Próxima clase</span>
+          <span class="kpi-valor" :class="`kpi-valor--${colorProximaClase}`">{{
+            proximaClaseTitulo
+          }}</span>
+          <span class="kpi-detalle"><span class="kpi-punto"></span>{{ proximaClaseDetalle }}</span>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-icono kpi-icono--info">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z" />
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            </svg>
+          </span>
+          <span class="kpi-label">Materias</span>
+          <span class="kpi-valor">{{ materiasStore.materias.length }}</span>
+          <span class="kpi-detalle">registradas</span>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-icono kpi-icono--info">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+              <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5" />
+            </svg>
+          </span>
+          <span class="kpi-label">Créditos</span>
+          <span class="kpi-valor">{{ creditosRegistrados }}</span>
+          <span class="kpi-detalle">registrados</span>
+        </div>
+
+        <div class="kpi-card">
+          <span class="kpi-icono" :class="`kpi-icono--${estadoAcademico.color}`">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 2 14.5 8.5 21 9.3l-5 4.6 1.3 6.6L12 17.6 6.7 20.5 8 13.9 3 9.3l6.5-.8Z"
+              />
+            </svg>
+          </span>
+          <span class="kpi-label">Estado académico</span>
+          <span class="kpi-valor" :class="`kpi-valor--${estadoAcademico.color}`">{{
+            estadoAcademico.titulo
+          }}</span>
+          <span class="kpi-detalle"
+            ><span class="kpi-punto"></span>{{ estadoAcademico.detalle }}</span
+          >
+        </div>
+      </section>
+
+      <section class="materias-section">
+        <h2>Mis materias</h2>
+
+        <div v-if="materiasStore.materiasConPromedio.length === 0" class="materias-vacio">
+          <p>Aún no has registrado materias.</p>
+          <RouterLink :to="{ name: 'materias' }" class="link-materias"
+            >Registrar mi primera materia →</RouterLink
+          >
+        </div>
+
+        <div v-else class="materias-lista">
           <button
             v-for="materia in materiasStore.materiasConPromedio"
             :key="materia.id"
             type="button"
-            class="materia-card"
+            class="materia-fila"
+            :aria-label="`Ver notas de ${materia.nombre}`"
+            :title="`Ver notas de ${materia.nombre}`"
             @click="irANotas(materia.id)"
           >
-            <div class="materia-info">
+            <span class="materia-icono">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v18H6.5A2.5 2.5 0 0 0 4 22.5z" />
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              </svg>
+            </span>
+
+            <div class="materia-datos">
               <strong>{{ materia.nombre }}</strong>
               <p class="docente">{{ materia.docente }}</p>
               <small>
-                {{ materia.horario?.dia }} {{ materia.horario?.horaInicio }} -
-                {{ materia.horario?.horaFin }}
+                {{
+                  materia.horario?.dia
+                    ? `${materia.horario.dia} ${materia.horario.horaInicio} - ${materia.horario.horaFin}`
+                    : "Horario no registrado"
+                }}
               </small>
+            </div>
 
-              <div class="meta-info">
-                <template v-if="materia.completa">
+            <div class="materia-meta">
+              <span class="meta-icono" :class="`meta-icono--${colorPromedio(materia)}`">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2 14.5 8.5 21 9.3l-5 4.6 1.3 6.6L12 17.6 6.7 20.5 8 13.9 3 9.3l6.5-.8Z"
+                  />
+                </svg>
+              </span>
+              <div class="meta-texto">
+                <span class="meta-titulo">Meta {{ materia.meta }}</span>
+                <template v-if="!materia.tieneNotas">
+                  <p class="mensaje-progreso">Aún no registras notas para esta materia.</p>
+                </template>
+                <template v-else-if="materia.completa">
                   <p v-if="materia.promedio >= materia.meta" class="mensaje-exito">
                     ¡Meta alcanzada! Superaste tu meta de {{ materia.meta }}.
                   </p>
@@ -149,31 +296,81 @@
               </div>
             </div>
 
-            <div class="promedio-badge">
-              <span class="promedio-label">Promedio</span>
-              <span class="promedio-valor">{{ materia.promedio.toFixed(1) }}</span>
+            <div class="materia-promedio-bloque">
+              <div class="materia-promedio-numeros">
+                <span class="promedio-label">Promedio</span>
+                <span class="promedio-valor" :class="`promedio-valor--${colorPromedio(materia)}`">{{
+                  materia.tieneNotas ? materia.promedio.toFixed(1) : "—"
+                }}</span>
+              </div>
+
+              <svg
+                v-if="materiasStore.historialValoresDeMateria(materia.id).length > 1"
+                class="materia-sparkline"
+                viewBox="0 0 120 40"
+                preserveAspectRatio="none"
+              >
+                <path
+                  :d="crearPathLinea(materiasStore.historialValoresDeMateria(materia.id), 120, 40)"
+                  fill="none"
+                  :class="`sparkline-linea--${colorPromedio(materia)}`"
+                  stroke-width="2"
+                />
+              </svg>
             </div>
           </button>
         </div>
       </section>
+
+      <div v-if="mostrarConsejo" class="consejo-banner">
+        <span class="consejo-icono" aria-hidden="true">🚀</span>
+        <p><strong>Consejo del día:</strong> {{ consejoActual }}</p>
+        <button
+          type="button"
+          class="consejo-cerrar"
+          aria-label="Cerrar consejo"
+          @click="mostrarConsejo = false"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 6 6 18" />
+            <path d="M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
+import { useMateriasStore } from "../stores/materias";
+import Sidebar from "@/layout/Sidebar.vue";
 import { signOut } from "firebase/auth";
 import { auth } from "../service/firebase";
-import { useMateriasStore } from "../stores/materias";
-import Titulo from "@/components/titulo.vue";
 import Swal from "sweetalert2";
-import logo from "@/assets/logo.png";
+import "@/assets/base.css";
 
 const authStore = useAuthStore();
 const router = useRouter();
 const materiasStore = useMateriasStore();
+
+const irANotas = (materiaId) => {
+  router.push({ name: "notas_materia", params: { materiaId } });
+};
+
+const inicialUsuario = computed(() => {
+  const nombre = authStore.usuario?.displayName || "";
+  return nombre.charAt(0).toUpperCase() || "U";
+});
 
 const cerrarSesion = async () => {
   try {
@@ -198,12 +395,25 @@ const cerrarSesion = async () => {
     });
   }
 };
-const irANotas = (materiaId) => {
-  router.push({ name: "notas_materia", params: { materiaId } });
-};
+
+// Color del badge/borde: puramente por valor numérico del promedio,
+// independiente de si el estudiante cumplió su meta personal o no.
+function colorPromedio(materia) {
+  if (!materia.tieneNotas) return "vacio";
+  const p = materia.promedio;
+  if (p >= 4.0) return "exito";
+  if (p >= 3.5) return "info";
+  if (p >= 3.0) return "advertencia";
+  return "riesgo";
+}
 
 const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const diaHoy = computed(() => diasSemana[new Date().getDay()]);
+
+const primerNombre = computed(() => {
+  const nombre = authStore.usuario?.displayName || "";
+  return nombre.split(" ")[0] || "Usuario";
+});
 
 const clasesDeHoy = computed(() =>
   materiasStore.materias
@@ -220,8 +430,6 @@ function obtenerHoraActual() {
 }
 
 // Convierte "HH:MM" (con o sin cero adelante) a minutos desde medianoche.
-// Comparar horas como strings es frágil ("09:05" <= "9:00" da true por ser
-// comparación de caracteres), así que todo pasa a número antes de comparar.
 function horaAMinutos(horaStr) {
   if (!horaStr) return null;
   const [h, m] = horaStr.split(":").map(Number);
@@ -233,7 +441,6 @@ const horaActual = ref(obtenerHoraActual());
 const minutosActuales = computed(() => horaAMinutos(horaActual.value));
 let intervaloReloj = null;
 
-// Materia que está en curso justo ahora (si hay alguna).
 const claseActual = computed(() =>
   clasesDeHoy.value.find((m) => {
     const inicio = horaAMinutos(m.horario?.horaInicio);
@@ -243,7 +450,6 @@ const claseActual = computed(() =>
   }),
 );
 
-// Materias de hoy que todavía no han empezado
 const proximasClasesHoy = computed(() =>
   clasesDeHoy.value.filter((m) => {
     const inicio = horaAMinutos(m.horario?.horaInicio);
@@ -251,21 +457,108 @@ const proximasClasesHoy = computed(() =>
   }),
 );
 
-// Mensaje temporal: se llena justo cuando una clase termina, y se borra sola después
-const claseRecienTerminada = ref(null);
-let timeoutMensaje = null;
-
-watch(claseActual, (nuevaClase, claseAnterior) => {
-  if (!nuevaClase && claseAnterior) {
-    claseRecienTerminada.value = claseAnterior;
-
-    clearTimeout(timeoutMensaje);
-    timeoutMensaje = setTimeout(() => {
-      claseRecienTerminada.value = null;
-    }, 10000); // el mensaje dura 10 segundos
-  }
+// Título corto para la tarjeta KPI de próxima clase
+const proximaClaseTitulo = computed(() => {
+  if (claseActual.value) return claseActual.value.nombre;
+  if (proximasClasesHoy.value.length > 0) return proximasClasesHoy.value[0].nombre;
+  return `Hoy, ${diaHoy.value}`;
 });
 
+const proximaClaseDetalle = computed(() => {
+  if (claseActual.value) return `En curso hasta las ${claseActual.value.horario.horaFin}`;
+  if (proximasClasesHoy.value.length > 0) {
+    return `A las ${proximasClasesHoy.value[0].horario.horaInicio}`;
+  }
+  return "Sin clases pendientes";
+});
+
+// Color de la tarjeta "Próxima clase": verde cuando hay una clase en curso ahora mismo
+const colorProximaClase = computed(() => (claseActual.value ? "exito" : "info"));
+
+// Estado académico resumido: cuántas materias con notas están en meta
+const materiasConNotas = computed(() =>
+  materiasStore.materiasConPromedio.filter((m) => m.tieneNotas),
+);
+
+const estadoAcademico = computed(() => {
+  const total = materiasConNotas.value.length;
+  if (total === 0) {
+    return { titulo: "Sin notas", detalle: "Aún no registras notas", color: "vacio" };
+  }
+  const enMeta = materiasConNotas.value.filter((m) => m.promedio >= m.meta).length;
+  const detalle = `${enMeta} de ${total} materias`;
+  if (enMeta === total) return { titulo: "En meta", detalle, color: "exito" };
+  if (enMeta > 0) return { titulo: "Cerca de la meta", detalle, color: "advertencia" };
+  return { titulo: "Por mejorar", detalle, color: "riesgo" };
+});
+
+// Mensaje motivacional corto, basado en el promedio general
+const mensajeMotivacional = computed(() => {
+  const promedio = materiasStore.promedioGeneral;
+  if (promedio === null) return "Registra tus primeras notas para ver tu progreso.";
+  if (promedio >= 4.0) return "Vas excelente este semestre, sigue así.";
+  if (promedio >= 3.5) return "Buen ritmo, estás cerca de tus metas.";
+  if (promedio >= 3.0) return "Vas bien, un poco más de esfuerzo y llegas a tu meta.";
+  return "Es momento de reforzar — todavía puedes mejorar esto.";
+});
+
+const badgePromedioGeneral = computed(() => {
+  const p = materiasStore.promedioGeneral;
+  if (p === null) return { texto: "Sin datos", color: "vacio" };
+  if (p >= 4.0) return { texto: "Excelente", color: "exito" };
+  if (p >= 3.5) return { texto: "Bien", color: "info" };
+  if (p >= 3.0) return { texto: "Regular", color: "advertencia" };
+  return { texto: "En riesgo", color: "riesgo" };
+});
+
+const creditosRegistrados = computed(() =>
+  materiasStore.materias.reduce((acc, m) => acc + (m.creditos || 0), 0),
+);
+
+// --- Sparklines: convierten un array de promedios en un path SVG ---
+function crearPathLinea(valores, ancho, alto, min = 0, max = 5) {
+  if (!valores || valores.length === 0) return "";
+  if (valores.length === 1) {
+    const y = alto - ((valores[0] - min) / (max - min)) * alto;
+    return `M0,${y.toFixed(1)} L${ancho},${y.toFixed(1)}`;
+  }
+  const paso = ancho / (valores.length - 1);
+  return valores
+    .map((v, i) => {
+      const x = i * paso;
+      const clamped = Math.min(Math.max(v, min), max);
+      const y = alto - ((clamped - min) / (max - min)) * alto;
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
+
+function crearPathArea(valores, ancho, alto, min = 0, max = 5) {
+  const linea = crearPathLinea(valores, ancho, alto, min, max);
+  if (!linea) return "";
+  return `${linea} L${ancho},${alto} L0,${alto} Z`;
+}
+
+const pathLineaGeneral = computed(() =>
+  crearPathLinea(materiasStore.historialValoresGeneral, 480, 110),
+);
+const pathAreaGeneral = computed(() => {
+  // Con un solo punto no hay tendencia real que mostrar todavía.
+  if (materiasStore.historialValoresGeneral.length < 2) return "";
+  return crearPathArea(materiasStore.historialValoresGeneral, 480, 110);
+});
+
+// --- Consejo del día ---
+const consejos = [
+  "La consistencia es la clave del éxito. ¡Sigue así!",
+  "Repasa tus apuntes 10 minutos antes de dormir, se fija mejor la memoria.",
+  "Divide las tareas grandes en pasos pequeños, es más fácil empezar.",
+  "Celebra tus pequeños logros académicos, cuentan tanto como los grandes.",
+];
+const consejoActual = ref(consejos[Math.floor(Math.random() * consejos.length)]);
+const mostrarConsejo = ref(true);
+
+//--bienvenida de primer inicio de la pagina --//
 const mostrarBienvenida = ref(false);
 const irAMateriasDesdeBienvenida = () => {
   mostrarBienvenida.value = false;
@@ -286,12 +579,11 @@ onMounted(() => {
 
   intervaloReloj = setInterval(() => {
     horaActual.value = obtenerHoraActual();
-  }, 15000); // revisa cada 15 segundos
+  }, 15000);
 });
 
 onUnmounted(() => {
   clearInterval(intervaloReloj);
-  clearTimeout(timeoutMensaje);
 });
 </script>
 
@@ -299,18 +591,7 @@ onUnmounted(() => {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-14px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -318,571 +599,721 @@ onUnmounted(() => {
   }
 }
 
-@keyframes pulsoLive {
-  0% {
-    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
-  }
+.dashboard {
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text-body, var(--color-text));
 }
 
-.home {
-  /* --- Tokens: estilo belzavin --- */
-  --color-bg: var(--color-background);
-  --color-surface: var(--color-surface);
-  --color-border: var(--color-border);
-  --color-border-soft: var(--color-border);
-  --color-input-bg: var(--color-surface-soft);
-
-  --color-brand-blue: var(--color-accent-strong);
-  --color-brand-blue-hover: var(--color-button-hover);
-  --color-brand-blue-soft: var(--color-accent-soft);
-
-  --color-text: var(--color-text);
-  --color-text-muted: var(--color-text-muted);
-  --color-text-faint: #8da3c2;
-
-  --color-live: #22c55e;
-  --color-live-soft: rgba(34, 197, 94, 0.16);
-  --color-live-border: rgba(34, 197, 94, 0.35);
-  --color-danger: #ef4444;
-
-  --radius-lg: 20px;
-  --radius-md: 12px;
-  --radius-sm: 10px;
-
-  --shadow-card: 0 20px 50px rgba(15, 27, 45, 0.08);
-  --shadow-card-sm: 0 8px 20px rgba(15, 27, 45, 0.06);
-
-  --top-bar-height: 7.5rem;
-
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.dashboard-main {
+  margin-left: var(--sidebar-width, 236px);
+  padding: 2rem clamp(1.5rem, 3vw, 3rem) 3rem;
 }
 
 .bienvenida-overlay {
   position: fixed;
   inset: 0;
-  background: linear-gradient(135deg, rgba(3, 7, 13, 0.72), rgba(15, 27, 45, 0.58));
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 20;
   padding: 1.5rem;
 }
 
 .bienvenida-modal {
-  position: relative;
-  max-width: 460px;
-  width: 100%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(238, 245, 255, 0.96));
-  border: 1px solid rgba(63, 140, 255, 0.28);
-  border-radius: 24px;
-  padding: 2.25rem 2rem 2rem;
-  text-align: center;
-  color: #0f172a;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
-  animation: fadeInUp 0.45s ease both;
-  overflow: hidden;
-}
-
-.bienvenida-modal::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(120deg, rgba(11, 95, 255, 0.1), transparent 55%);
-  pointer-events: none;
+  width: min(600px, 100%);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.32s ease;
 }
 
 .bienvenida-modal h2 {
-  position: relative;
-  z-index: 1;
-  margin: 0 0 0.9rem;
-  color: #0f172a;
-  font-size: 1.55rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  margin: 0 0 0.8rem;
+  font-size: 1.8rem;
+  line-height: 1.2;
+  color: var(--color-heading);
 }
 
 .bienvenida-modal p {
-  position: relative;
-  z-index: 1;
-  color: #475569;
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
   line-height: 1.7;
-  margin: 0 0 1.6rem;
-  font-size: 1rem;
 }
 
 .bienvenida-modal button {
-  position: relative;
-  z-index: 1;
-  padding: 0.85rem 1.5rem;
-  background: linear-gradient(135deg, var(--color-brand-blue), #2563eb);
-  color: white;
   border: none;
   border-radius: 999px;
-  font-weight: 800;
-  font-size: 0.95rem;
+  padding: 0.95rem 1.6rem;
+  background: var(--color-button);
+  color: white;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+  font: inherit;
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
+    background 200ms ease,
+    transform 200ms ease;
 }
 
 .bienvenida-modal button:hover {
+  background: var(--color-button-hover);
   transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.3);
-  filter: brightness(1.04);
 }
 
-.bienvenida-modal button:active {
-  transform: scale(0.98);
+/* ---------- Topbar ---------- */
+.dashboard-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
-.top-bar {
-  width: 100vw;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: linear-gradient(135deg, rgba(10, 17, 28, 0.96), rgba(17, 28, 44, 0.96));
-  color: var(--color-text);
-  border-bottom: 1px solid rgba(99, 140, 255, 0.25);
-  z-index: 10;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(14px);
+.saludo h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-heading);
+  letter-spacing: -0.01em;
+}
+
+.saludo-motivacional {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.topbar-acciones {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.7rem 1.5rem;
-}
-
-.logo-top-bar {
-  height: 60px;
-  width: auto;
-  object-fit: contain;
+  gap: 0.9rem;
   flex-shrink: 0;
 }
 
-.user-bar {
-  flex: 1;
-  max-width: 1120px;
-  margin: 0 auto;
+.usuario-chip {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.5rem 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 0.65rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.4rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
-.user-bar-empty {
-  justify-content: center;
-  padding: 0.4rem 0;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.profile-pic {
-  width: 56px;
-  height: 56px;
+.usuario-chip-avatar {
+  width: 2.3rem;
+  height: 2.3rem;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+  flex-shrink: 0;
 }
 
-.user-meta {
+.usuario-chip-avatar--inicial {
+  display: grid;
+  place-items: center;
+  background: var(--color-accent-strong, var(--color-button));
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.usuario-chip-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.1rem;
+  min-width: 0;
 }
 
-.user-meta h2 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--color-text);
+.usuario-chip-nombre {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--color-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
 }
 
-.user-meta .email {
-  margin: 0;
-  color: var(--color-text-faint);
-  font-size: 0.95rem;
+.usuario-chip-email {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
 }
 
-.user-actions {
-  display: flex;
+.usuario-chip-logout {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.usuario-chip-logout svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.usuario-chip-logout:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-danger, #ef4444);
+}
+
+/* ---------- Clase en vivo ---------- */
+.clase-en-vivo {
+  display: inline-flex;
   align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: #0f2e29;
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.32s ease;
+}
+
+.clase-en-vivo-punto {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+  animation: clasePulso 1.8s infinite;
+}
+
+@keyframes clasePulso {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.clase-en-vivo p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #d7e7e2;
+}
+
+.clase-en-vivo strong {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+/* ---------- KPI row ---------- */
+.kpi-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 1.35rem 1.5rem;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  animation: fadeInUp 0.32s ease;
+}
+
+.kpi-card--promedio {
+  justify-content: space-between;
+}
+
+.kpi-card--promedio-centrado {
+  justify-content: center;
+  gap: 0.85rem;
+  flex-grow: 1;
+}
+
+.kpi-label {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.kpi-promedio-valor-fila {
+  display: flex;
+  align-items: baseline;
   gap: 0.75rem;
 }
 
-.promedio-general-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 0.9rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(11, 95, 255, 0.24), rgba(37, 99, 235, 0.2));
-  border: 1px solid rgba(99, 140, 255, 0.3);
-  min-width: 124px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
-}
-
-.promedio-general-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #dbeafe;
-}
-
-.promedio-general-valor {
-  font-size: 1rem;
+.kpi-promedio-valor {
+  font-size: 2.4rem;
   font-weight: 800;
-  color: white;
+  color: var(--color-accent-strong);
+  line-height: 1;
 }
 
-.logout-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+.kpi-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: 0.2s ease;
 }
 
-.logout-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.24);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+.kpi-badge--exito {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--color-success);
 }
-
-.logout-btn:active {
-  transform: scale(0.97);
+.kpi-badge--info {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--color-info, var(--color-accent-strong));
 }
-
-.home-content {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  padding: 7.5rem 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.kpi-badge--advertencia {
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--color-warning);
 }
-
-.dashboard-panel {
-  width: 100%;
-  max-width: 920px;
-  padding: 1.75rem;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(18, 28, 42, 0.98) 0%, rgba(10, 16, 24, 0.98) 100%);
-  border: 1px solid rgba(63, 140, 255, 0.28);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
-  animation: fadeInUp 0.6s ease both;
+.kpi-badge--riesgo {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-danger);
 }
-
-.dashboard-header {
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.dashboard-header :deep(h1) {
-  margin: 0 0 0.45rem;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--color-text);
-  animation: fadeInDown 0.7s ease both;
-}
-
-.dashboard-header :deep(p) {
-  margin: 0;
+.kpi-badge--vacio {
+  background: rgba(148, 163, 184, 0.14);
   color: var(--color-text-muted);
+}
+
+.kpi-sparkline-grande {
+  width: 100%;
+  height: 5.5rem;
+  margin-top: 0.25rem;
+}
+
+.kpi-sparkline-vacio {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.kpi-icono {
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 10px;
+  margin-bottom: 0.2rem;
+}
+
+.kpi-icono svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.kpi-icono--info {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--color-info, var(--color-accent-strong));
+}
+.kpi-icono--exito {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--color-success);
+}
+.kpi-icono--advertencia {
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--color-warning);
+}
+.kpi-icono--riesgo {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-danger);
+}
+.kpi-icono--vacio {
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--color-text-muted);
+}
+
+.kpi-valor {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-heading);
+}
+
+.kpi-valor--exito {
+  color: var(--color-success);
+}
+.kpi-valor--advertencia {
+  color: var(--color-warning);
+}
+.kpi-valor--riesgo {
+  color: var(--color-danger);
+}
+.kpi-valor--vacio {
+  color: var(--color-text-muted);
+}
+
+.kpi-detalle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.kpi-punto {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ---------- Materias ---------- */
+.materias-section h2 {
+  margin: 0 0 1.1rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-heading);
+}
+
+.materias-vacio {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 1.6rem 1.75rem;
+  color: var(--color-text-muted);
+  display: grid;
+  place-items: center;
+  min-height: 98px;
+}
+
+.materias-vacio p {
+  margin: 0;
   line-height: 1.7;
 }
 
-.widget-hoy {
-  width: 100%;
-  margin-bottom: 1.5rem;
-  padding: 1.1rem 1.25rem;
-  border-radius: var(--radius-md);
-  background: var(--color-accent-soft);
-  border: 1px solid var(--color-border);
-}
-
-.widget-hoy h3 {
-  margin: 0 0 0.6rem;
-  color: var(--color-text);
-  font-size: 1.05rem;
+.link-materias {
+  display: inline-flex;
+  margin-top: 1rem;
+  color: var(--color-link);
   font-weight: 700;
+  text-decoration: none;
+  transition: color 200ms ease;
 }
 
-.hoy-vacio {
-  color: var(--color-text-faint);
-  font-size: 0.9rem;
+.link-materias:hover {
+  color: var(--color-accent-strong);
+  text-decoration: underline;
 }
 
-.clase-en-curso {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.65rem 0.9rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-live-soft);
-  border: 1px solid var(--color-live-border);
+.materias-lista {
+  display: grid;
+  gap: 0.9rem;
 }
 
-.clase-en-curso p {
-  margin: 0;
-  font-size: 0.92rem;
-  color: var(--color-text);
-}
-
-.clase-en-curso strong {
-  color: var(--color-live);
-}
-
-.pulso {
-  flex-shrink: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-live);
-  animation: pulsoLive 1.6s infinite;
-}
-
-.clase-terminada {
-  padding: 0.65rem 0.9rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-input-bg);
-  border: 1px solid var(--color-border-soft);
-}
-
-.clase-terminada p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
-}
-
-.clase-terminada strong {
-  color: var(--color-text);
-}
-
-.proximas-hoy {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border-soft);
-}
-
-.proximas-titulo {
-  margin: 0 0 0.4rem;
-  font-size: 0.85rem;
-  color: var(--color-text-faint);
-}
-
-.clase-proxima {
-  font-size: 0.88rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0.3rem;
-}
-
-.clase-proxima strong {
-  color: var(--color-text);
-}
-
-.resumen-materias {
+.materia-fila {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.materia-card {
-  appearance: none;
-  font: inherit;
-  background: linear-gradient(135deg, rgba(28, 39, 58, 0.95) 0%, rgba(14, 21, 33, 0.95) 100%);
-  padding: 1rem 1.1rem;
-  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1.3fr) minmax(0, 1.6fr) auto;
+  align-items: center;
+  gap: 1.35rem;
+  padding: 1.1rem 1.4rem;
   text-align: left;
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  border: 1px solid rgba(63, 140, 255, 0.24);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  background: var(--color-surface);
+  color: var(--color-text-body, var(--color-text));
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
   cursor: pointer;
-  animation: fadeInUp 0.5s ease both;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    transform 200ms ease,
+    box-shadow 200ms ease;
+  font: inherit;
 }
 
-.resumen-materias .materia-card:nth-child(2) {
-  animation-delay: 0.06s;
-}
-
-.resumen-materias .materia-card:nth-child(3) {
-  animation-delay: 0.12s;
-}
-
-.materia-card:hover {
+.materia-fila:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(15, 27, 45, 0.1);
-  border-color: var(--color-border-hover);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
 }
 
-.materia-card:focus-visible {
-  outline: 2px solid var(--color-brand-blue);
-  outline-offset: 2px;
+.materia-fila:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 3px;
 }
 
-.materia-info {
+.materia-icono {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 12px;
+  flex-shrink: 0;
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--color-info, var(--color-accent-strong));
+}
+
+.materia-icono svg {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.materia-datos {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.3rem;
 }
 
-.materia-info strong {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
+.materia-datos strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-heading);
+  text-transform: capitalize;
 }
 
 .docente {
   margin: 0;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
-  font-size: 0.95rem;
-}
-
-.materia-card small {
-  color: var(--color-text-faint);
-}
-
-.meta-info {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-}
-
-.mensaje-exito {
-  color: var(--color-live);
   font-weight: 600;
 }
 
-.mensaje-fallo {
+.materia-datos small {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.materia-meta {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.meta-icono {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.meta-icono svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.meta-icono--exito {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--color-success);
+}
+.meta-icono--info {
+  background: rgba(56, 189, 248, 0.14);
+  color: var(--color-info, var(--color-accent-strong));
+}
+.meta-icono--advertencia {
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--color-warning);
+}
+.meta-icono--riesgo {
+  background: rgba(239, 68, 68, 0.12);
   color: var(--color-danger);
-  font-weight: 600;
+}
+.meta-icono--vacio {
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--color-text-muted);
+}
+
+.meta-texto {
+  min-width: 0;
+}
+
+.meta-titulo {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: 0.15rem;
+}
+
+.mensaje-progreso,
+.mensaje-exito,
+.mensaje-fallo {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
 }
 
 .mensaje-progreso {
-  color: var(--color-text-muted);
+  color: var(--color-warning);
+}
+.mensaje-exito {
+  color: var(--color-success);
+}
+.mensaje-fallo {
+  color: var(--color-danger);
 }
 
-.promedio-badge {
+.materia-promedio-bloque {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-self: end;
+}
+
+.materia-promedio-numeros {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 86px;
-  background: var(--color-brand-blue);
-  color: white;
-  padding: 0.5rem 0.7rem;
-  border-radius: 999px;
-  font-weight: 700;
-  box-shadow: 0 8px 20px rgba(11, 95, 255, 0.2);
+  align-items: flex-end;
+  gap: 0.15rem;
 }
 
 .promedio-label {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.85;
+  letter-spacing: 0.06em;
 }
 
 .promedio-valor {
-  font-size: 1rem;
-  line-height: 1;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-heading);
+  padding: 0.2rem 0.65rem;
+  border-radius: 8px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .bienvenida-modal,
-  .dashboard-panel,
-  .dashboard-header :deep(h1),
-  .materia-card,
-  .pulso {
-    animation: none !important;
-  }
+.promedio-valor--exito {
+  background: rgba(34, 197, 94, 0.18);
+  color: var(--color-success);
+}
+.promedio-valor--info {
+  background: rgba(56, 189, 248, 0.18);
+  color: var(--color-info, var(--color-accent-strong));
+}
+.promedio-valor--advertencia {
+  background: rgba(245, 158, 11, 0.18);
+  color: var(--color-warning);
+}
+.promedio-valor--riesgo {
+  background: rgba(239, 68, 68, 0.18);
+  color: var(--color-danger);
+}
 
-  .materia-card:hover,
-  .logout-btn:hover,
-  .bienvenida-modal button:hover {
-    transform: none;
+.materia-sparkline {
+  width: 5.5rem;
+  height: 2.2rem;
+  flex-shrink: 0;
+}
+
+.sparkline-linea--exito {
+  stroke: var(--color-success);
+}
+.sparkline-linea--info {
+  stroke: var(--color-info, var(--color-accent-strong));
+}
+.sparkline-linea--advertencia {
+  stroke: var(--color-warning);
+}
+.sparkline-linea--riesgo {
+  stroke: var(--color-danger);
+}
+.sparkline-linea--vacio {
+  stroke: var(--color-text-muted);
+}
+
+/* ---------- Consejo del día ---------- */
+.consejo-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.4rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+
+.consejo-icono {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.consejo-banner p {
+  margin: 0;
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--color-text-body, var(--color-text));
+  line-height: 1.6;
+}
+
+.consejo-cerrar {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.consejo-cerrar svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.consejo-cerrar:hover {
+  background: var(--color-accent-soft);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+  .kpi-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .kpi-card--promedio {
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 768px) {
-  .top-bar {
-    padding: 0.5rem 1rem;
+@media (max-width: 900px) {
+  .dashboard-main {
+    margin-left: 0;
   }
+}
 
-  .logo-top-bar {
-    height: 44px;
-  }
-
-  .user-bar {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
-
-  .user-info {
-    justify-content: center;
-  }
-
-  .home-content {
-    padding-top: 9.5rem;
-  }
-
-  .dashboard-panel {
+@media (max-width: 720px) {
+  .dashboard-main {
     padding: 1.25rem;
   }
 
-  .materia-card {
-    flex-direction: column;
-    align-items: flex-start;
+  .kpi-row {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .promedio-badge {
-    align-self: flex-end;
+  .materia-fila {
+    grid-template-columns: 1fr;
+    row-gap: 0.85rem;
+  }
+
+  .materia-promedio-bloque {
+    justify-self: start;
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>
