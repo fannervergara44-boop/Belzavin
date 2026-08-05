@@ -144,6 +144,7 @@ const creditos = ref(null);
 const dia = ref("");
 const horaInicio = ref("");
 const horaFin = ref("");
+const guardando = ref(false);
 
 const agregarMateria = async () => {
   if (
@@ -165,6 +166,8 @@ const agregarMateria = async () => {
     return;
   }
 
+  guardando.value = true;
+
   Swal.fire({
     title: "Agregando materia...",
     allowOutsideClick: false,
@@ -174,19 +177,26 @@ const agregarMateria = async () => {
   });
 
   try {
-    await materiasStore.crearMateria({
-      nombre: nombre.value,
-      docente: docente.value,
-      meta: meta.value,
-      creditos: creditos.value,
-      horario: {
-        dia: dia.value,
-        horaInicio: horaInicio.value,
-        horaFin: horaFin.value,
-      },
-    });
+    // Esperamos la creación Y un mínimo de tiempo visible del loading a la
+    // vez (gana el que tarde más). crearMateria ahora resuelve casi
+    // instantáneo, así que sin este mínimo el Swal de éxito se dispara
+    // mientras el de "Agregando materia..." todavía está animando su
+    // apertura, y se ven pisados uno encima del otro.
+    await Promise.all([
+      materiasStore.crearMateria({
+        nombre: nombre.value,
+        docente: docente.value,
+        meta: meta.value,
+        creditos: creditos.value,
+        horario: {
+          dia: dia.value,
+          horaInicio: horaInicio.value,
+          horaFin: horaFin.value,
+        },
+      }),
+      new Promise((resolve) => setTimeout(resolve, 400)),
+    ]);
 
-    Swal.hideLoading();
     await Swal.fire({
       icon: "success",
       title: "Materia agregada",
@@ -204,7 +214,6 @@ const agregarMateria = async () => {
     horaFin.value = "";
   } catch (error) {
     console.error("No se pudo agregar la materia:", error);
-    Swal.hideLoading();
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -212,6 +221,8 @@ const agregarMateria = async () => {
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
+  } finally {
+    guardando.value = false;
   }
 };
 
@@ -236,7 +247,6 @@ const eliminarMateria = async (materia) => {
 
   try {
     await materiasStore.eliminarMateria(materia.id);
-    Swal.hideLoading();
     Swal.fire({
       icon: "success",
       title: "Materia eliminada",
@@ -246,7 +256,6 @@ const eliminarMateria = async (materia) => {
     });
   } catch (error) {
     console.error("No se pudo eliminar la materia:", error);
-    Swal.hideLoading();
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -406,6 +415,11 @@ const eliminarMateria = async (materia) => {
 
 .form-materia button:active {
   transform: scale(0.98);
+}
+
+.form-materia button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* ---------- Lista de materias ---------- */
