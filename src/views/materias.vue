@@ -184,6 +184,8 @@ const agregarMateria = async () => {
       },
     });
 
+    Swal.close(); // cierra el modal de "Agregando materia..." antes de abrir el de éxito
+
     await Swal.fire({
       icon: "success",
       title: "Materia agregada",
@@ -201,6 +203,7 @@ const agregarMateria = async () => {
     horaFin.value = "";
   } catch (error) {
     console.error("No se pudo agregar la materia:", error);
+    Swal.close(); // cierra el modal de "Agregando materia..." antes de abrir el de error
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -232,6 +235,9 @@ const eliminarMateria = async (materia) => {
 
   try {
     await materiasStore.eliminarMateria(materia.id);
+
+    Swal.close(); // cierra el modal de "Eliminando materia..." antes de abrir el de éxito
+
     Swal.fire({
       icon: "success",
       title: "Materia eliminada",
@@ -241,6 +247,7 @@ const eliminarMateria = async (materia) => {
     });
   } catch (error) {
     console.error("No se pudo eliminar la materia:", error);
+    Swal.close(); // cierra el modal de "Eliminando materia..." antes de abrir el de error
     Swal.fire({
       icon: "error",
       title: "Error",
