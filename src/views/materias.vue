@@ -83,7 +83,9 @@
             </div>
           </div>
 
-          <button type="submit">Agregar materia</button>
+          <button type="submit" :disabled="guardando">
+            {{ guardando ? "Agregando..." : "Agregar materia" }}
+          </button>
         </form>
 
         <div class="lista-materias-wrapper">
@@ -185,11 +187,10 @@ const agregarMateria = async () => {
     });
 
     Swal.hideLoading();
-    await Swal.update({
+    await Swal.fire({
       icon: "success",
       title: "Materia agregada",
       text: `${nombre.value} se agregó correctamente.`,
-      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
@@ -204,11 +205,10 @@ const agregarMateria = async () => {
   } catch (error) {
     console.error("No se pudo agregar la materia:", error);
     Swal.hideLoading();
-    Swal.update({
+    Swal.fire({
       icon: "error",
       title: "Error",
       text: "No se pudo agregar la materia. Intenta de nuevo.",
-      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
@@ -236,24 +236,21 @@ const eliminarMateria = async (materia) => {
 
   try {
     await materiasStore.eliminarMateria(materia.id);
-
     Swal.hideLoading();
-    Swal.update({
+    Swal.fire({
       icon: "success",
       title: "Materia eliminada",
       text: `${materia.nombre} fue eliminada.`,
-      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
   } catch (error) {
     console.error("No se pudo eliminar la materia:", error);
     Swal.hideLoading();
-    Swal.update({
+    Swal.fire({
       icon: "error",
       title: "Error",
       text: "No se pudo eliminar la materia.",
-      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
