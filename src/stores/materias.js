@@ -28,14 +28,94 @@ export const useMateriasStore = defineStore("materias", () => {
   // historialGeneral = [{ id, promedio, fecha }, ...] ordenado por fecha asc
   const historialGeneral = ref([]);
 
+  const unsubscribes = {
+    materias: null,
+    historialGeneral: null,
+    notasPorMateria: {},
+    historialPorMateria: {},
+  };
+
+  function limpiarEscuchasMaterias() {
+    if (typeof unsubscribes.materias === "function") {
+      unsubscribes.materias();
+      unsubscribes.materias = null;
+    }
+  }
+
+  function limpiarEscuchasHistorialGeneral() {
+    if (typeof unsubscribes.historialGeneral === "function") {
+      unsubscribes.historialGeneral();
+      unsubscribes.historialGeneral = null;
+    }
+  }
+
+  function limpiarEscuchasNotasDeMateria(materiaId) {
+    ["corte1", "corte2", "corte3"].forEach((corteId) => {
+      const key = `${materiaId}_${corteId}`;
+      const unsubscribe = unsubscribes.notasPorMateria[key];
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+        delete unsubscribes.notasPorMateria[key];
+      }
+    });
+  }
+
+  function limpiarEscuchasHistorialDeMateria(materiaId) {
+    const unsubscribe = unsubscribes.historialPorMateria[materiaId];
+    if (typeof unsubscribe === "function") {
+      unsubscribe();
+      delete unsubscribes.historialPorMateria[materiaId];
+    }
+  }
+
+  function limpiarTodasLasEscuchas() {
+    limpiarEscuchasMaterias();
+    limpiarEscuchasHistorialGeneral();
+
+    Object.keys(unsubscribes.notasPorMateria).forEach((key) => {
+      const unsubscribe = unsubscribes.notasPorMateria[key];
+      if (typeof unsubscribe === "function") unsubscribe();
+      delete unsubscribes.notasPorMateria[key];
+    });
+
+    Object.keys(unsubscribes.historialPorMateria).forEach((materiaId) => {
+      const unsubscribe = unsubscribes.historialPorMateria[materiaId];
+      if (typeof unsubscribe === "function") unsubscribe();
+      delete unsubscribes.historialPorMateria[materiaId];
+    });
+  }
+
+  function limpiarEstadoMaterias() {
+    materias.value = [];
+    historialGeneral.value = [];
+    cargando.value = true;
+
+    Object.keys(notasPorMateria).forEach((materiaId) => delete notasPorMateria[materiaId]);
+    Object.keys(historialPorMateria).forEach((materiaId) => delete historialPorMateria[materiaId]);
+  }
+
   function escucharMaterias(uid) {
+    limpiarEscuchasMaterias();
+
     const materiasRef = collection(firestore, "usuarios", uid, "materias");
 
-    onSnapshot(materiasRef, (snapshot) => {
-      materias.value = snapshot.docs.map((doc) => ({
+    unsubscribes.materias = onSnapshot(materiasRef, (snapshot) => {
+      const nuevasMaterias = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+      const nuevosIds = nuevasMaterias.map((materia) => materia.id);
+
+      Object.keys(notasPorMateria).forEach((materiaId) => {
+        if (!nuevosIds.includes(materiaId)) {
+          limpiarEscuchasNotasDeMateria(materiaId);
+          limpiarEscuchasHistorialDeMateria(materiaId);
+          delete notasPorMateria[materiaId];
+          delete historialPorMateria[materiaId];
+        }
+      });
+
+      materias.value = nuevasMaterias;
       cargando.value = false;
 
       // Por cada materia, escuchamos las notas de sus 3 cortes fijos
@@ -53,6 +133,8 @@ export const useMateriasStore = defineStore("materias", () => {
   }
 
   function escucharNotasDeMateria(uid, materiaId) {
+    limpiarEscuchasNotasDeMateria(materiaId);
+
     ["corte1", "corte2", "corte3"].forEach((corteId) => {
       const notasRef = collection(
         firestore,
@@ -64,23 +146,31 @@ export const useMateriasStore = defineStore("materias", () => {
         corteId,
         "notas",
       );
+      const key = `${materiaId}_${corteId}`;
 
-      onSnapshot(notasRef, (snapshot) => {
-        notasPorMateria[materiaId][corteId] = snapshot.docs.map((doc) => ({
+      unsubscribes.notasPorMateria[key] = onSnapshot(notasRef, (snapshot) => {
+        const notas = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        if (!notasPorMateria[materiaId]) {
+          notasPorMateria[materiaId] = { corte1: [], corte2: [], corte3: [] };
+        }
+        notasPorMateria[materiaId][corteId] = notas;
       });
     });
   }
 
   function escucharHistorialDeMateria(uid, materiaId) {
+    limpiarEscuchasHistorialDeMateria(materiaId);
+
     const historialRef = query(
       collection(firestore, "usuarios", uid, "materias", materiaId, "historial"),
       orderBy("fecha", "asc"),
     );
 
-    onSnapshot(historialRef, (snapshot) => {
+    unsubscribes.historialPorMateria[materiaId] = onSnapshot(historialRef, (snapshot) => {
       historialPorMateria[materiaId] = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -89,12 +179,14 @@ export const useMateriasStore = defineStore("materias", () => {
   }
 
   function escucharHistorialGeneral(uid) {
+    limpiarEscuchasHistorialGeneral();
+
     const historialRef = query(
       collection(firestore, "usuarios", uid, "historialGeneral"),
       orderBy("fecha", "asc"),
     );
 
-    onSnapshot(historialRef, (snapshot) => {
+    unsubscribes.historialGeneral = onSnapshot(historialRef, (snapshot) => {
       historialGeneral.value = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -105,12 +197,14 @@ export const useMateriasStore = defineStore("materias", () => {
   watch(
     () => authStore.usuario,
     (usuario) => {
+      limpiarTodasLasEscuchas();
+      limpiarEstadoMaterias();
+
       if (usuario) {
         escucharMaterias(usuario.uid);
         escucharHistorialGeneral(usuario.uid);
       } else {
-        materias.value = [];
-        historialGeneral.value = [];
+        cargando.value = false;
       }
     },
     { immediate: true },
