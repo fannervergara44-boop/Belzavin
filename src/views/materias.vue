@@ -184,12 +184,12 @@ const agregarMateria = async () => {
       },
     });
 
-    Swal.close(); // cierra el modal de "Agregando materia..." antes de abrir el de éxito
-
-    await Swal.fire({
+    Swal.hideLoading();
+    await Swal.update({
       icon: "success",
       title: "Materia agregada",
       text: `${nombre.value} se agregó correctamente.`,
+      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
@@ -203,11 +203,12 @@ const agregarMateria = async () => {
     horaFin.value = "";
   } catch (error) {
     console.error("No se pudo agregar la materia:", error);
-    Swal.close(); // cierra el modal de "Agregando materia..." antes de abrir el de error
-    Swal.fire({
+    Swal.hideLoading();
+    Swal.update({
       icon: "error",
       title: "Error",
       text: "No se pudo agregar la materia. Intenta de nuevo.",
+      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
@@ -236,22 +237,23 @@ const eliminarMateria = async (materia) => {
   try {
     await materiasStore.eliminarMateria(materia.id);
 
-    Swal.close(); // cierra el modal de "Eliminando materia..." antes de abrir el de éxito
-
-    Swal.fire({
+    Swal.hideLoading();
+    Swal.update({
       icon: "success",
       title: "Materia eliminada",
       text: `${materia.nombre} fue eliminada.`,
+      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
   } catch (error) {
     console.error("No se pudo eliminar la materia:", error);
-    Swal.close(); // cierra el modal de "Eliminando materia..." antes de abrir el de error
-    Swal.fire({
+    Swal.hideLoading();
+    Swal.update({
       icon: "error",
       title: "Error",
       text: "No se pudo eliminar la materia.",
+      showConfirmButton: true,
       confirmButtonText: "Aceptar",
       showCloseButton: true,
     });
