@@ -31,7 +31,7 @@
         </div>
 
         <svg
-          v-if="puntosGeneral.length >= 1"
+          v-if="puntosGeneral.length > 1"
           class="grafica-general-svg"
           viewBox="0 0 760 240"
           preserveAspectRatio="none"
@@ -68,18 +68,18 @@
             :cy="yDesdeValor(punto.promedio)"
             r="4"
             class="grafica-punto"
-          />
+          >
+            <title>{{ tooltipGeneral(punto) }}</title>
+          </circle>
         </svg>
 
         <div v-else class="grafica-vacio">
           <p>Aún no hay histórico suficiente para graficar tu evolución general.</p>
         </div>
 
-        <div v-if="puntosGeneral.length >= 1" class="grafica-eje-x">
+        <div v-if="puntosGeneral.length > 1" class="grafica-eje-x">
           <span>{{ formatearFecha(puntosGeneral[0].fecha) }}</span>
-          <span v-if="puntosGeneral.length > 1">{{
-            formatearFecha(puntosGeneral[puntosGeneral.length - 1].fecha)
-          }}</span>
+          <span>{{ formatearFecha(puntosGeneral[puntosGeneral.length - 1].fecha) }}</span>
         </div>
       </section>
 
@@ -109,51 +109,43 @@
             </div>
 
             <svg
-              v-if="historialDe(materia.id).length >= 1"
+              v-if="notasOrdenadasDeMateria(materia.id).length > 1"
               class="materia-evolucion-svg"
               viewBox="0 0 300 90"
               preserveAspectRatio="none"
             >
-              <defs>
-                <linearGradient :id="`gradienteMateria-${materia.id}`" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="0%"
-                    :style="{ stopColor: colorHexPromedio(materia.promedio), stopOpacity: 0.45 }"
-                  />
-                  <stop
-                    offset="100%"
-                    :style="{ stopColor: colorHexPromedio(materia.promedio), stopOpacity: 0 }"
-                  />
-                </linearGradient>
-              </defs>
-
               <path
                 :d="areaDe(materia.id)"
-                :fill="`url(#gradienteMateria-${materia.id})`"
+                :class="`area-materia--${colorPromedio(materia.promedio)}`"
                 stroke="none"
               />
               <path
                 :d="lineaDe(materia.id)"
                 fill="none"
-                stroke-width="2.5"
-                :style="{ stroke: colorLineaPromedio(materia.promedio) }"
+                stroke-width="2"
+                :class="`linea-materia--${colorPromedio(materia.promedio)}`"
               />
               <circle
-                v-for="(punto, i) in historialDe(materia.id)"
-                :key="i"
-                :cx="xDesdeIndiceMateria(i, historialDe(materia.id).length)"
-                :cy="yDesdeValor(punto.promedio, 0, 5, 90)"
-                r="2.5"
-                :style="{
-                  fill: colorLineaPromedio(materia.promedio),
-                  stroke: 'var(--color-surface)',
-                  strokeWidth: '1.5px',
-                }"
-              />
+                v-for="(nota, i) in notasOrdenadasDeMateria(materia.id)"
+                :key="nota.id"
+                :cx="xDesdeIndice(i, notasOrdenadasDeMateria(materia.id).length, 300)"
+                :cy="yDesdeValor(nota.valor, 0, 5, 90)"
+                r="3"
+                :class="`punto-materia--${colorPromedio(materia.promedio)}`"
+              >
+                <title>{{ tooltipNota(nota) }}</title>
+              </circle>
             </svg>
 
             <p v-else-if="!materia.tieneNotas" class="materia-evolucion-mensaje">
               Aún no tienes notas registradas en esta materia.
+            </p>
+
+            <p
+              v-else-if="notasOrdenadasDeMateria(materia.id).length === 1"
+              class="materia-evolucion-mensaje"
+            >
+              Solo tienes una nota registrada — con la próxima ya vas a ver la evolución acá.
             </p>
 
             <div v-else class="materia-evolucion-espacio"></div>
@@ -179,30 +171,6 @@ function colorPromedio(promedio) {
   return "riesgo";
 }
 
-function colorHexPromedio(promedio) {
-  if (promedio >= 4.0) return "#22c55e"; // verde - éxito
-  if (promedio >= 3.5) return "#38bdf8"; // celeste - info
-  if (promedio >= 3.0) return "#f59e0b"; // ámbar - advertencia
-  return "#ef4444"; // rojo - riesgo
-}
-
-// Aclara un color hex mezclándolo con blanco, sin depender de CSS var() ni
-// color-mix() (no todos los navegadores/webviews los soportan igual).
-function aclararHex(hex, cantidad) {
-  const num = parseInt(hex.slice(1), 16);
-  let r = (num >> 16) & 255;
-  let g = (num >> 8) & 255;
-  let b = num & 255;
-  r = Math.round(r + (255 - r) * cantidad);
-  g = Math.round(g + (255 - g) * cantidad);
-  b = Math.round(b + (255 - b) * cantidad);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-function colorLineaPromedio(promedio) {
-  return aclararHex(colorHexPromedio(promedio), 0.35);
-}
-
 function etiquetaPromedio(promedio) {
   if (promedio >= 4.0) return "Excelente";
   if (promedio >= 3.5) return "Bien";
@@ -216,17 +184,17 @@ function formatearFecha(fecha) {
   return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short" });
 }
 
+function tooltipGeneral(punto) {
+  const base = `${formatearFecha(punto.fecha)} — Promedio: ${punto.promedio.toFixed(1)}`;
+  return punto.materiaNombre ? `${base} · Nota en ${punto.materiaNombre}` : base;
+}
+
 // --- Gráfica general ---
 const puntosGeneral = computed(() => materiasStore.historialGeneral);
 
-function xDesdeIndice(i, total) {
+function xDesdeIndice(i, total, ancho = 760) {
   if (total <= 1) return 0;
-  return (i / (total - 1)) * 760;
-}
-
-function xDesdeIndiceMateria(i, total) {
-  if (total <= 1) return 0;
-  return (i / (total - 1)) * 300;
+  return (i / (total - 1)) * ancho;
 }
 
 function yDesdeValor(valor, min = 0, max = 5, alto = 240) {
@@ -270,14 +238,25 @@ const areaGeneral = computed(() =>
   ),
 );
 
-// --- Gráficas por materia ---
-function historialDe(materiaId) {
-  return materiasStore.historialPorMateria[materiaId] || [];
+// --- Gráficas por materia: usan el valor real de cada nota individual,
+// sin importar su porcentaje, ordenadas cronológicamente ---
+function notasOrdenadasDeMateria(materiaId) {
+  const cortes = materiasStore.notasPorMateria[materiaId] || {};
+  const todas = ["corte1", "corte2", "corte3"].flatMap((corteId) => cortes[corteId] || []);
+  return todas
+    .filter((n) => n.createdAt?.seconds)
+    .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds);
+}
+
+function tooltipNota(nota) {
+  const fecha = formatearFecha(nota.createdAt);
+  const tipo = nota.descripcion || "Nota";
+  return `${nota.nombre} (${tipo}) — ${nota.valor} · ${nota.porcentaje}%${fecha ? " · " + fecha : ""}`;
 }
 
 function lineaDe(materiaId) {
   return construirLinea(
-    historialDe(materiaId).map((p) => p.promedio),
+    notasOrdenadasDeMateria(materiaId).map((n) => n.valor),
     300,
     90,
   );
@@ -285,7 +264,7 @@ function lineaDe(materiaId) {
 
 function areaDe(materiaId) {
   return construirArea(
-    historialDe(materiaId).map((p) => p.promedio),
+    notasOrdenadasDeMateria(materiaId).map((n) => n.valor),
     300,
     90,
   );
@@ -408,6 +387,12 @@ function areaDe(materiaId) {
   fill: var(--color-accent-strong);
   stroke: var(--color-surface);
   stroke-width: 2;
+  cursor: pointer;
+  transition: r 0.15s ease;
+}
+
+.grafica-punto:hover {
+  r: 6;
 }
 
 .grafica-vacio {
@@ -487,6 +472,56 @@ function areaDe(materiaId) {
 .materia-evolucion-svg {
   width: 100%;
   height: 5.6rem;
+}
+
+.linea-materia--exito {
+  stroke: var(--color-success);
+}
+.linea-materia--info {
+  stroke: var(--color-info, var(--color-accent-strong));
+}
+.linea-materia--advertencia {
+  stroke: var(--color-warning);
+}
+.linea-materia--riesgo {
+  stroke: var(--color-danger);
+}
+
+.area-materia--exito {
+  fill: rgba(34, 197, 94, 0.22);
+}
+.area-materia--info {
+  fill: rgba(56, 189, 248, 0.22);
+}
+.area-materia--advertencia {
+  fill: rgba(245, 158, 11, 0.22);
+}
+.area-materia--riesgo {
+  fill: rgba(239, 68, 68, 0.22);
+}
+
+.punto-materia--exito {
+  fill: var(--color-success);
+}
+.punto-materia--info {
+  fill: var(--color-info, var(--color-accent-strong));
+}
+.punto-materia--advertencia {
+  fill: var(--color-warning);
+}
+.punto-materia--riesgo {
+  fill: var(--color-danger);
+}
+
+.materia-evolucion-svg circle {
+  stroke: var(--color-surface);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: r 0.15s ease;
+}
+
+.materia-evolucion-svg circle:hover {
+  r: 5;
 }
 
 .materia-evolucion-mensaje {

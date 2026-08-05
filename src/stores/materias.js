@@ -4,12 +4,13 @@ import {
   collection,
   addDoc,
   doc,
-  setDoc,
   onSnapshot,
-  deleteDoc,
   serverTimestamp,
   query,
   orderBy,
+  where,
+  getDocs,
+  writeBatch,
 } from "firebase/firestore";
 import { firestore } from "../service/firebase";
 import { useAuthStore } from "../stores/auth";
@@ -173,6 +174,9 @@ export const useMateriasStore = defineStore("materias", () => {
   // optimista antes de que se resuelva el await de addDoc).
   async function registrarHistorial(materiaId) {
     const uid = authStore.usuario.uid;
+    // Guardamos un snapshot del nombre por si la materia se renombra o se
+    // borra más adelante — así el histórico sigue siendo legible.
+    const materiaNombre = materias.value.find((m) => m.id === materiaId)?.nombre || "";
 
     const historialMateriaRef = collection(
       firestore,
@@ -193,6 +197,8 @@ export const useMateriasStore = defineStore("materias", () => {
       await addDoc(historialGeneralRef, {
         promedio: promedioGen,
         fecha: serverTimestamp(),
+        materiaId,
+        materiaNombre,
       });
     }
   }
@@ -250,31 +256,89 @@ export const useMateriasStore = defineStore("materias", () => {
 
   async function crearMateria({ nombre, docente, meta, creditos, horario }) {
     const uid = authStore.usuario.uid;
+    const batch = writeBatch(firestore);
 
     const materiasRef = collection(firestore, "usuarios", uid, "materias");
-    const nuevaMateria = await addDoc(materiasRef, { nombre, docente, meta, creditos, horario });
+    // doc(materiasRef) genera un id nuevo localmente sin hacer ningún viaje
+    // de red todavía — recién se escribe cuando se hace commit() del batch.
+    const nuevaMateriaRef = doc(materiasRef);
+    batch.set(nuevaMateriaRef, { nombre, docente, meta, creditos, horario });
 
     const pesos = [33, 33, 34];
-    for (let i = 0; i < pesos.length; i++) {
+    pesos.forEach((peso, i) => {
       const corteRef = doc(
         firestore,
         "usuarios",
         uid,
         "materias",
-        nuevaMateria.id,
+        nuevaMateriaRef.id,
         "cortes",
         `corte${i + 1}`,
       );
-      await setDoc(corteRef, { numero: i + 1, peso: pesos[i] });
-    }
+      batch.set(corteRef, { numero: i + 1, peso });
+    });
 
-    return nuevaMateria.id;
+    // No esperamos a que el servidor confirme el commit: en cuanto se
+    // llama a commit(), Firestore ya aplicó la escritura de forma optimista
+    // al caché local (por eso la materia aparece al instante en la lista
+    // vía el listener de escucharMaterias). Esperar la confirmación del
+    // servidor solo agrega latencia de red al loading sin beneficio real
+    // para el usuario. Si el commit llega a fallar de verdad (permisos,
+    // etc.), Firestore revierte el cambio local solo y lo dejamos
+    // registrado en consola en vez de trabar la UI.
+    batch.commit().catch((error) => {
+      console.error("No se pudo confirmar la creación de la materia con el servidor:", error);
+    });
+
+    return nuevaMateriaRef.id;
   }
 
   async function eliminarMateria(materiaId) {
     const uid = authStore.usuario.uid;
+    const batch = writeBatch(firestore);
+
+    // 1. Notas y documento de cada uno de los 3 cortes
+    for (const corteId of ["corte1", "corte2", "corte3"]) {
+      const notasRef = collection(
+        firestore,
+        "usuarios",
+        uid,
+        "materias",
+        materiaId,
+        "cortes",
+        corteId,
+        "notas",
+      );
+      const notasSnap = await getDocs(notasRef);
+      notasSnap.forEach((notaDoc) => batch.delete(notaDoc.ref));
+
+      const corteRef = doc(firestore, "usuarios", uid, "materias", materiaId, "cortes", corteId);
+      batch.delete(corteRef);
+    }
+
+    // 2. Histórico propio de la materia (para su sparkline)
+    const historialRef = collection(firestore, "usuarios", uid, "materias", materiaId, "historial");
+    const historialSnap = await getDocs(historialRef);
+    historialSnap.forEach((histDoc) => batch.delete(histDoc.ref));
+
+    // 3. Puntos del histórico general que se generaron a partir de esta
+    // materia — si no se borran, la gráfica de "Promedio general" sigue
+    // mostrando datos de una materia que ya no existe.
+    const historialGeneralRef = collection(firestore, "usuarios", uid, "historialGeneral");
+    const qHistorialGeneral = query(historialGeneralRef, where("materiaId", "==", materiaId));
+    const historialGeneralSnap = await getDocs(qHistorialGeneral);
+    historialGeneralSnap.forEach((histDoc) => batch.delete(histDoc.ref));
+
+    // 4. La materia en sí
     const materiaRef = doc(firestore, "usuarios", uid, "materias", materiaId);
-    await deleteDoc(materiaRef);
+    batch.delete(materiaRef);
+
+    await batch.commit();
+
+    // Limpieza del estado local reactivo, para que no queden llaves
+    // "fantasma" apuntando a una materia que ya no existe.
+    delete notasPorMateria[materiaId];
+    delete historialPorMateria[materiaId];
   }
 
   function porcentajeUsadoCorte(materiaId, corteId) {
