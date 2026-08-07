@@ -688,4 +688,20 @@ function promedioCorte(materiaId, corteId) {
     justify-content: space-between;
   }
 }
+
+@media (max-width: 480px) {
+  .perfil-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .perfil-stats {
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .perfil-stat {
+    min-width: 0;
+  }
+}
 </style>

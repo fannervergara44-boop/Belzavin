@@ -81,7 +81,7 @@
         </p>
       </div>
 
-      <section class="kpi-row">
+      <section class="kpi-row" data-tour="home-kpis-secundarios">
         <div
           class="kpi-card kpi-card--promedio"
           :class="{ 'kpi-card--promedio-centrado': !pathAreaGeneral }"
@@ -1317,6 +1317,39 @@ onUnmounted(() => {
     justify-self: start;
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar-acciones {
+    justify-content: flex-end;
+  }
+
+  .usuario-chip-nombre,
+  .usuario-chip-email {
+    max-width: 6rem;
+  }
+
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .clase-en-vivo {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .clase-en-vivo p {
+    font-size: 0.82rem;
+  }
+
+  .consejo-banner {
+    flex-wrap: wrap;
   }
 }
 </style>

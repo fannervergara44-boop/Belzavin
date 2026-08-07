@@ -88,7 +88,7 @@
           </button>
         </form>
 
-        <div class="lista-materias-wrapper">
+        <div class="lista-materias-wrapper" data-tour="materias-lista">
           <h2>Materias registradas</h2>
 
           <div v-if="materiasStore.materias.length" class="lista-materias">
@@ -552,6 +552,10 @@ const eliminarMateria = async (materia) => {
 @media (max-width: 720px) {
   .materias-main {
     padding: 1.25rem;
+  }
+
+  .campo-fila {
+    grid-template-columns: 1fr;
   }
 
   .materia-fila {

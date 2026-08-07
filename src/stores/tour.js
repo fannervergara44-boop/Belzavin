@@ -7,15 +7,27 @@ export const useTourStore = defineStore("tour", () => {
   const pasos = [
     {
       ruta: "home",
-      selector: '[data-tour="nav-home"]',
+      selector: '[data-tour="sidebar-completo"]',
       titulo: "¡Bienvenido a Belzavin!",
       texto: "Este es el menú principal — desde acá navegas a todas las secciones de la app.",
+    },
+    {
+      ruta: "home",
+      selector: '[data-tour="nav-home"]',
+      titulo: "Inicio",
+      texto: "Tu punto de partida: un resumen de tu día, tu promedio y tus materias.",
     },
     {
       ruta: "home",
       selector: '[data-tour="home-promedio"]',
       titulo: "Tu promedio general",
       texto: "Acá ves tu promedio ponderado con todas tus materias, actualizado en tiempo real.",
+    },
+    {
+      ruta: "home",
+      selector: '[data-tour="home-kpis-secundarios"]',
+      titulo: "Más indicadores rápidos",
+      texto: "Tu próxima clase, cuántas materias y créditos llevas, y tu estado académico general.",
     },
     {
       ruta: "home",
@@ -37,6 +49,13 @@ export const useTourStore = defineStore("tour", () => {
         "Agrega nombre, docente, meta, créditos y horario — se conecta automáticamente con el resto de la app.",
     },
     {
+      ruta: "materias",
+      selector: '[data-tour="materias-lista"]',
+      titulo: "Materias registradas",
+      texto:
+        "Acá ves todas tus materias guardadas, con la opción de eliminarlas si ya no las necesitas.",
+    },
+    {
       ruta: "notas",
       selector: '[data-tour="nav-notas"]',
       titulo: "Notas",
@@ -48,6 +67,12 @@ export const useTourStore = defineStore("tour", () => {
       selector: '[data-tour="notas-form"]',
       titulo: "Notas de texto",
       texto: "Usa esta sección para apuntes libres, recordatorios o resúmenes de clase.",
+    },
+    {
+      ruta: "notas",
+      selector: '[data-tour="notas-guardadas"]',
+      titulo: "Notas guardadas",
+      texto: "Acá aparecen todas tus notas, con opción de editarlas o eliminarlas cuando quieras.",
     },
     {
       ruta: "horario",
@@ -85,6 +110,12 @@ export const useTourStore = defineStore("tour", () => {
       selector: '[data-tour="evolucion-general"]',
       titulo: "Evolución académica",
       texto: "Visualiza cómo cambia tu promedio con el tiempo, y nota por nota en cada materia.",
+    },
+    {
+      ruta: "evolucion",
+      selector: '[data-tour="evolucion-por-materia"]',
+      titulo: "Evolución por materia",
+      texto: "Cada materia tiene su propia gráfica con el valor real de cada nota que registres.",
     },
     {
       ruta: "perfil",

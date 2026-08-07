@@ -17,6 +17,7 @@
       </div>
 
       <div v-else class="grilla-wrapper" data-tour="horario-grilla">
+        <p class="grilla-hint-scroll">← Desliza para ver toda la semana →</p>
         <div class="grilla" :style="gridStyle">
           <div class="celda encabezado" :style="{ gridColumn: 1, gridRow: 1 }"></div>
 
@@ -186,6 +187,14 @@ function estiloEvento(materia) {
 }
 
 /* ---------- Grilla ---------- */
+.grilla-hint-scroll {
+  display: none;
+  margin: 0 0 0.75rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
 .grilla-wrapper {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -274,6 +283,10 @@ function estiloEvento(materia) {
 
   .grilla-wrapper {
     padding: 0.85rem;
+  }
+
+  .grilla-hint-scroll {
+    display: block;
   }
 }
 </style>

@@ -84,7 +84,7 @@
       </section>
 
       <!-- Grid de evolución por materia -->
-      <section class="materias-evolucion-section">
+      <section class="materias-evolucion-section" data-tour="evolucion-por-materia">
         <h2>Evolución por materia</h2>
 
         <div v-if="materiasStore.materias.length === 0" class="materias-evolucion-vacio">
@@ -552,6 +552,20 @@ function areaDe(materiaId) {
 
   .grafica-general-card {
     padding: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grafica-general-svg {
+    height: 11rem;
+  }
+
+  .grafica-general-valor {
+    font-size: 2rem;
+  }
+
+  .materias-evolucion-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

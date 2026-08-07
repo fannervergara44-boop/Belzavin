@@ -39,7 +39,7 @@
           </div>
         </form>
 
-        <section class="notas-lista-section">
+        <section class="notas-lista-section" data-tour="notas-guardadas">
           <h2>Notas guardadas</h2>
 
           <div v-if="notasStore.notas.length === 0" class="notas-vacio">
