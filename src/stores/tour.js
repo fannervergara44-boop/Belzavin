@@ -7,14 +7,8 @@ export const useTourStore = defineStore("tour", () => {
   const pasos = [
     {
       ruta: "home",
-      selector: '[data-tour="sidebar-completo"]',
-      titulo: "¡Bienvenido a Belzavin!",
-      texto: "Este es el menú principal — desde acá navegas a todas las secciones de la app.",
-    },
-    {
-      ruta: "home",
       selector: '[data-tour="nav-home"]',
-      titulo: "Inicio",
+      titulo: "¡Bienvenido a Belzavin!",
       texto: "Tu punto de partida: un resumen de tu día, tu promedio y tus materias.",
     },
     {
