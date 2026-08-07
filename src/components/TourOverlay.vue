@@ -51,6 +51,13 @@ function esperarElemento(selector, intentos = 30) {
     const intento = (restantes) => {
       const el = document.querySelector(selector);
       if (el || restantes <= 0) {
+        if (!el) {
+          console.warn(
+            `[tour] No se encontró el elemento para "${selector}" después de reintentar. ` +
+              `¿Está el atributo data-tour en el HTML? Coincidencias en el DOM ahora mismo:`,
+            document.querySelectorAll(selector).length,
+          );
+        }
         resolve(el);
         return;
       }
