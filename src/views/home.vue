@@ -81,7 +81,7 @@
         </p>
       </div>
 
-      <section class="kpi-row" data-tour="home-kpis-secundarios">
+      <section class="kpi-row">
         <div
           class="kpi-card kpi-card--promedio"
           :class="{ 'kpi-card--promedio-centrado': !pathAreaGeneral }"
@@ -124,7 +124,7 @@
           </p>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" data-tour="home-proxima-clase">
           <span class="kpi-icono" :class="`kpi-icono--${colorProximaClase}`">
             <svg
               viewBox="0 0 24 24"
@@ -147,7 +147,7 @@
           <span class="kpi-detalle"><span class="kpi-punto"></span>{{ proximaClaseDetalle }}</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" data-tour="home-materias-kpi">
           <span class="kpi-icono kpi-icono--info">
             <svg
               viewBox="0 0 24 24"
@@ -166,7 +166,7 @@
           <span class="kpi-detalle">registradas</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" data-tour="home-creditos-kpi">
           <span class="kpi-icono kpi-icono--info">
             <svg
               viewBox="0 0 24 24"
@@ -185,7 +185,7 @@
           <span class="kpi-detalle">registrados</span>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card" data-tour="home-estado-academico">
           <span class="kpi-icono" :class="`kpi-icono--${estadoAcademico.color}`">
             <svg
               viewBox="0 0 24 24"

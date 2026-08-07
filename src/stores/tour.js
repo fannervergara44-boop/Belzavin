@@ -25,9 +25,27 @@ export const useTourStore = defineStore("tour", () => {
     },
     {
       ruta: "home",
-      selector: '[data-tour="home-kpis-secundarios"]',
-      titulo: "Más indicadores rápidos",
-      texto: "Tu próxima clase, cuántas materias y créditos llevas, y tu estado académico general.",
+      selector: '[data-tour="home-proxima-clase"]',
+      titulo: "Próxima clase",
+      texto: "Tu próxima clase del día, o un aviso cuando ya estás en curso.",
+    },
+    {
+      ruta: "home",
+      selector: '[data-tour="home-materias-kpi"]',
+      titulo: "Materias",
+      texto: "Cuántas materias llevas registradas en total.",
+    },
+    {
+      ruta: "home",
+      selector: '[data-tour="home-creditos-kpi"]',
+      titulo: "Créditos",
+      texto: "La suma de créditos de todas tus materias registradas.",
+    },
+    {
+      ruta: "home",
+      selector: '[data-tour="home-estado-academico"]',
+      titulo: "Estado académico",
+      texto: "Un resumen de cuántas materias vas cumpliendo frente a su meta.",
     },
     {
       ruta: "home",
