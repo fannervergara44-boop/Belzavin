@@ -8,11 +8,15 @@
         <p class="horario-subtitulo">Así se ve tu semana de clases, de un vistazo.</p>
       </header>
 
-      <div v-if="materiasStore.materias.length === 0" class="horario-vacio">
+      <div
+        v-if="materiasStore.materias.length === 0"
+        class="horario-vacio"
+        data-tour="horario-grilla"
+      >
         <p>No tienes materias con horario todavía.</p>
       </div>
 
-      <div v-else class="grilla-wrapper">
+      <div v-else class="grilla-wrapper" data-tour="horario-grilla">
         <div class="grilla" :style="gridStyle">
           <div class="celda encabezado" :style="{ gridColumn: 1, gridRow: 1 }"></div>
 

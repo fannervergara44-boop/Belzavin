@@ -27,7 +27,7 @@
     <main class="dashboard-main">
       <header class="dashboard-topbar">
         <div class="saludo">
-          <h1>Hola, {{ primerNombre }}</h1>
+          <h1>Hola, {{ primerNombre }} 👋</h1>
           <p class="saludo-motivacional">{{ mensajeMotivacional }}</p>
         </div>
 
@@ -85,6 +85,7 @@
         <div
           class="kpi-card kpi-card--promedio"
           :class="{ 'kpi-card--promedio-centrado': !pathAreaGeneral }"
+          data-tour="home-promedio"
         >
           <span class="kpi-label">Promedio general</span>
           <div class="kpi-promedio-valor-fila">
@@ -209,7 +210,7 @@
         </div>
       </section>
 
-      <section class="materias-section">
+      <section class="materias-section" data-tour="home-materias-lista">
         <h2>Mis materias</h2>
 
         <div v-if="materiasStore.materiasConPromedio.length === 0" class="materias-vacio">
@@ -323,7 +324,7 @@
       </section>
 
       <div v-if="mostrarConsejo" class="consejo-banner">
-        <span class="consejo-icono" aria-hidden="true"></span>
+        <span class="consejo-icono" aria-hidden="true">🚀</span>
         <p><strong>Consejo del día:</strong> {{ consejoActual }}</p>
         <button
           type="button"
@@ -353,6 +354,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import { useMateriasStore } from "../stores/materias";
+import { useTourStore } from "@/stores/tour";
 import Sidebar from "@/layout/Sidebar.vue";
 import { signOut } from "firebase/auth";
 import { auth } from "../service/firebase";
@@ -362,6 +364,7 @@ import "@/assets/base.css";
 const authStore = useAuthStore();
 const router = useRouter();
 const materiasStore = useMateriasStore();
+const tourStore = useTourStore();
 
 const irANotas = (materiaId) => {
   router.push({ name: "notas_materia", params: { materiaId } });
@@ -562,7 +565,7 @@ const mostrarConsejo = ref(true);
 const mostrarBienvenida = ref(false);
 const irAMateriasDesdeBienvenida = () => {
   mostrarBienvenida.value = false;
-  router.push({ name: "materias" });
+  tourStore.iniciar();
 };
 
 onMounted(() => {

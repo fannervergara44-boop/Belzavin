@@ -9,7 +9,7 @@
       </header>
 
       <!-- Gráfica grande: promedio general -->
-      <section class="grafica-general-card">
+      <section class="grafica-general-card" data-tour="evolucion-general">
         <div class="grafica-general-encabezado">
           <div>
             <span class="grafica-general-label">Promedio general</span>

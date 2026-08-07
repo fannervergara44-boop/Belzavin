@@ -9,7 +9,7 @@
       </header>
 
       <!-- Datos del usuario -->
-      <div class="perfil-card">
+      <div class="perfil-card" data-tour="perfil-card">
         <img
           v-if="authStore.usuario?.photoURL"
           :src="authStore.usuario.photoURL"
@@ -55,7 +55,7 @@
 
       <div class="perfil-grid">
         <!-- Ranking por promedio -->
-        <section class="columna-ranking">
+        <section class="columna-ranking" data-tour="perfil-ranking">
           <h2 class="titulo-columna">Ranking por promedio</h2>
 
           <div class="ranking-card" :class="{ 'ranking-card--vacio': !rankingMaterias.length }">
@@ -80,7 +80,7 @@
         </section>
 
         <!-- Historial de materias -->
-        <section class="columna-historial">
+        <section class="columna-historial" data-tour="perfil-historial">
           <h2 class="titulo-columna">Historial académico</h2>
 
           <div v-if="materiasStore.materias.length === 0" class="vacio">

@@ -1,14 +1,24 @@
 <template>
   <div class="app-shell">
     <RouterView v-slot="{ Component, route }">
-      <transition :name="route.meta.transition || 'auth-slide-left'" mode="out-in">
+      <transition
+        :name="tourStore.activo ? 'sin-animacion' : route.meta.transition || 'auth-slide-left'"
+        mode="out-in"
+      >
         <component :is="Component" :key="route.name" />
       </transition>
     </RouterView>
+
+    <TourOverlay />
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import TourOverlay from "@/components/TourOverlay.vue";
+import { useTourStore } from "@/stores/tour";
+
+const tourStore = useTourStore();
+</script>
 
 <style scoped>
 .app-shell {

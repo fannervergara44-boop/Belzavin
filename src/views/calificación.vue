@@ -9,7 +9,7 @@
       </header>
 
       <div class="calificaciones-content">
-        <div class="paso-card paso-materias">
+        <div class="paso-card paso-materias" data-tour="calificaciones-materias">
           <h3>Selecciona la materia</h3>
 
           <div v-if="materiasStore.materias.length === 0" class="vacio">
@@ -217,6 +217,7 @@ const registrarNota = async () => {
     porcentajeNota.value = null;
     valorNota.value = null;
 
+    Swal.hideLoading();
     Swal.fire({
       icon: "success",
       title: "Registro Exitoso",
@@ -226,6 +227,7 @@ const registrarNota = async () => {
     });
   } catch (error) {
     console.error("No se pudo registrar la nota:", error);
+    Swal.hideLoading();
     Swal.fire({
       icon: "error",
       title: "Error",

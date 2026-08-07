@@ -9,7 +9,7 @@
       </header>
 
       <div class="materias-content">
-        <form class="form-materia" @submit.prevent="agregarMateria">
+        <form class="form-materia" @submit.prevent="agregarMateria" data-tour="materias-form">
           <div class="campo">
             <label for="nombre">Nombre de la materia</label>
             <input

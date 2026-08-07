@@ -9,7 +9,7 @@
       </header>
 
       <div class="notas-content">
-        <form class="form-nota" @submit.prevent="guardarNota">
+        <form class="form-nota" @submit.prevent="guardarNota" data-tour="notas-form">
           <div class="campo">
             <label for="titulo">Título</label>
             <input
@@ -126,6 +126,7 @@ const guardarNota = async () => {
       await notasStore.crearNota({ titulo: titulo.value, contenido: contenido.value });
     }
 
+    Swal.hideLoading();
     await Swal.fire({
       icon: "success",
       title: editandoId.value ? "Cambios guardados" : "Nota agregada",
@@ -136,6 +137,7 @@ const guardarNota = async () => {
     cancelarEdicion();
   } catch (error) {
     console.error("No se pudo guardar la nota:", error);
+    Swal.hideLoading();
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -180,6 +182,7 @@ const eliminarNota = async (nota) => {
 
   try {
     await notasStore.eliminarNota(nota.id);
+    Swal.hideLoading();
     Swal.fire({
       icon: "success",
       title: "Nota eliminada",
@@ -188,6 +191,7 @@ const eliminarNota = async (nota) => {
     });
   } catch (error) {
     console.error("No se pudo eliminar la nota:", error);
+    Swal.hideLoading();
     Swal.fire({
       icon: "error",
       title: "Error",

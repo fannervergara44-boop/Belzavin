@@ -7,7 +7,7 @@
       </div>
 
       <nav class="menu-list">
-        <RouterLink :to="{ name: 'home' }" class="menu-item">
+        <RouterLink :to="{ name: 'home' }" class="menu-item" data-tour="nav-home">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -23,7 +23,7 @@
           <span>Inicio</span>
         </RouterLink>
 
-        <RouterLink to="/materias" class="menu-item">
+        <RouterLink to="/materias" class="menu-item" data-tour="nav-materias">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -39,7 +39,7 @@
           <span>Mis materias</span>
         </RouterLink>
 
-        <RouterLink to="/notas" class="menu-item">
+        <RouterLink to="/notas" class="menu-item" data-tour="nav-notas">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -57,7 +57,7 @@
           <span>Notas</span>
         </RouterLink>
 
-        <RouterLink to="/horario" class="menu-item">
+        <RouterLink to="/horario" class="menu-item" data-tour="nav-horario">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -75,7 +75,7 @@
           <span>Horario</span>
         </RouterLink>
 
-        <RouterLink to="/calificaciones" class="menu-item">
+        <RouterLink to="/calificaciones" class="menu-item" data-tour="nav-calificaciones">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -90,7 +90,7 @@
           <span>Calificaciones</span>
         </RouterLink>
 
-        <RouterLink to="/evolucion" class="menu-item">
+        <RouterLink to="/evolucion" class="menu-item" data-tour="nav-evolucion">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
@@ -106,7 +106,7 @@
           <span>Evolución</span>
         </RouterLink>
 
-        <RouterLink to="/perfil" class="menu-item">
+        <RouterLink to="/perfil" class="menu-item" data-tour="nav-perfil">
           <svg
             class="menu-icon"
             viewBox="0 0 24 24"
