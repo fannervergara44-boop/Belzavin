@@ -2,156 +2,45 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
 export const useTourStore = defineStore("tour", () => {
-  // Cada paso: en qué ruta debe estar el usuario, qué elemento resaltar
-  // (vía atributo data-tour="..."), y el texto explicativo.
+  // Tour simplificado: solo recorre las opciones del menú lateral.
+  // No requiere cambiar de ruta porque el sidebar es parte del layout
+  // persistente (LayoutConSidebar.vue) y está visible en todas las páginas.
   const pasos = [
     {
-      ruta: "home",
       selector: '[data-tour="nav-home"]',
-      titulo: "¡Bienvenido a Belzavin!",
+      titulo: "Inicio",
       texto: "Tu punto de partida: un resumen de tu día, tu promedio y tus materias.",
     },
     {
-      ruta: "home",
-      selector: '[data-tour="home-promedio"]',
-      titulo: "Tu promedio general",
-      texto: "Acá ves tu promedio ponderado con todas tus materias, actualizado en tiempo real.",
-    },
-    {
-      ruta: "home",
-      selector: '[data-tour="home-proxima-clase"]',
-      titulo: "Próxima clase",
-      texto: "Tu próxima clase del día, o un aviso cuando ya estás en curso.",
-    },
-    {
-      ruta: "home",
-      selector: '[data-tour="home-materias-kpi"]',
-      titulo: "Materias",
-      texto: "Cuántas materias llevas registradas en total.",
-    },
-    {
-      ruta: "home",
-      selector: '[data-tour="home-creditos-kpi"]',
-      titulo: "Créditos",
-      texto: "La suma de créditos de todas tus materias registradas.",
-    },
-    {
-      ruta: "home",
-      selector: '[data-tour="home-estado-academico"]',
-      titulo: "Estado académico",
-      texto: "Un resumen de cuántas materias vas cumpliendo frente a su meta.",
-    },
-    {
-      ruta: "home",
-      selector: '[data-tour="home-materias-lista"]',
-      titulo: "Tus materias",
-      texto: "Cada materia muestra tu progreso frente a la meta que te propusiste para ella.",
-    },
-    {
-      ruta: "materias",
       selector: '[data-tour="nav-materias"]',
       titulo: "Mis materias",
-      texto: "Acá vas a registrar cada materia: nombre, docente, meta, créditos y horario.",
+      texto: "Registra cada materia: nombre, docente, meta, créditos y horario.",
     },
     {
-      ruta: "materias",
-      selector: '[data-tour="materias-form"]',
-      titulo: "Registra tus materias",
-      texto:
-        "Agrega nombre, docente, meta, créditos y horario — se conecta automáticamente con el resto de la app.",
-    },
-    {
-      ruta: "materias",
-      selector: '[data-tour="materias-lista"]',
-      titulo: "Materias registradas",
-      texto:
-        "Acá ves todas tus materias guardadas, con la opción de eliminarlas si ya no las necesitas.",
-    },
-    {
-      ruta: "notas",
       selector: '[data-tour="nav-notas"]',
       titulo: "Notas",
-      texto:
-        "Un espacio para apuntes libres y recordatorios rápidos, sin estructura de calificación.",
+      texto: "Un espacio para apuntes libres y recordatorios rápidos.",
     },
     {
-      ruta: "notas",
-      selector: '[data-tour="notas-form"]',
-      titulo: "Notas de texto",
-      texto: "Usa esta sección para apuntes libres, recordatorios o resúmenes de clase.",
-    },
-    {
-      ruta: "notas",
-      selector: '[data-tour="notas-guardadas"]',
-      titulo: "Notas guardadas",
-      texto: "Acá aparecen todas tus notas, con opción de editarlas o eliminarlas cuando quieras.",
-    },
-    {
-      ruta: "horario",
       selector: '[data-tour="nav-horario"]',
       titulo: "Horario",
       texto:
         "Tu semana completa de clases, armada automáticamente con los horarios de tus materias.",
     },
     {
-      ruta: "horario",
-      selector: '[data-tour="horario-grilla"]',
-      titulo: "Tu horario semanal",
-      texto: "Cada materia con horario aparece acá automáticamente, organizada por día y hora.",
-    },
-    {
-      ruta: "calificaciones",
       selector: '[data-tour="nav-calificaciones"]',
       titulo: "Calificaciones",
-      texto: "Acá registras las notas de cada corte, materia por materia.",
+      texto: "Registra las notas de cada corte, materia por materia.",
     },
     {
-      ruta: "calificaciones",
-      selector: '[data-tour="calificaciones-materias"]',
-      titulo: "Registrar calificaciones",
-      texto: "Elige una materia, después el corte, y registra tus notas con su porcentaje.",
-    },
-    {
-      ruta: "evolucion",
       selector: '[data-tour="nav-evolucion"]',
       titulo: "Evolución",
       texto: "Gráficas de cómo cambia tu promedio con el tiempo, en general y por materia.",
     },
     {
-      ruta: "evolucion",
-      selector: '[data-tour="evolucion-general"]',
-      titulo: "Evolución académica",
-      texto: "Visualiza cómo cambia tu promedio con el tiempo, y nota por nota en cada materia.",
-    },
-    {
-      ruta: "evolucion",
-      selector: '[data-tour="evolucion-por-materia"]',
-      titulo: "Evolución por materia",
-      texto: "Cada materia tiene su propia gráfica con el valor real de cada nota que registres.",
-    },
-    {
-      ruta: "perfil",
       selector: '[data-tour="nav-perfil"]',
       titulo: "Perfil",
       texto: "Tu información personal, tu ranking y tu historial académico completo.",
-    },
-    {
-      ruta: "perfil",
-      selector: '[data-tour="perfil-card"]',
-      titulo: "Tu perfil",
-      texto: "Edita tu nombre y consulta tus estadísticas generales.",
-    },
-    {
-      ruta: "perfil",
-      selector: '[data-tour="perfil-ranking"]',
-      titulo: "Ranking por promedio",
-      texto: "Tus 3 materias con mejor promedio, para que veas dónde te está yendo mejor.",
-    },
-    {
-      ruta: "perfil",
-      selector: '[data-tour="perfil-historial"]',
-      titulo: "Historial académico",
-      texto: "Expande cada materia para ver el detalle de tus notas por corte.",
     },
   ];
 

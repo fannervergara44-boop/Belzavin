@@ -31,34 +31,14 @@
 </template>
 
 <script setup>
-import { ref, watch, onBeforeUnmount, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, watch, onBeforeUnmount } from "vue";
 import { useTourStore } from "@/stores/tour";
 
 const tourStore = useTourStore();
-const route = useRoute();
-const router = useRouter();
 
 const highlightStyle = ref({ display: "none" });
 const tooltipStyle = ref({});
 let elementoActual = null;
-
-// Espera hasta encontrar el elemento en el DOM (útil justo después de
-// navegar a otra ruta, o mientras el store de materias todavía está
-// cargando datos de Firestore la primera vez).
-function esperarElemento(selector, intentos = 30) {
-  return new Promise((resolve) => {
-    const intento = (restantes) => {
-      const el = document.querySelector(selector);
-      if (el || restantes <= 0) {
-        resolve(el);
-        return;
-      }
-      setTimeout(() => intento(restantes - 1), 100);
-    };
-    intento(intentos);
-  });
-}
 
 function posicionar() {
   if (!elementoActual) {
@@ -95,19 +75,11 @@ async function irAlPasoActual() {
   const paso = tourStore.paso;
   if (!paso) return;
 
-  elementoActual = null;
-  highlightStyle.value = { display: "none" };
+  // El sidebar es parte del layout persistente, así que el elemento ya
+  // está en el DOM: no hace falta navegar ni esperar a que cargue nada.
+  elementoActual = document.querySelector(paso.selector);
 
-  if (route.name !== paso.ruta) {
-    await router.push({ name: paso.ruta });
-    await nextTick();
-  }
-
-  elementoActual = await esperarElemento(paso.selector);
-
-  // Un frame extra de margen para que el layout ya esté aplicado antes de
-  // medir — con la animación de página desactivada durante el tour
-  // (App.vue), esto es suficiente sin necesidad de perseguir la posición.
+  // Un frame de margen para asegurar que el layout esté aplicado antes de medir.
   await new Promise((resolve) => requestAnimationFrame(resolve));
   posicionar();
 }
